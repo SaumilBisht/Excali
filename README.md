@@ -1,3 +1,4 @@
+# THIS IS A PROJECT IN WHICH I'M BUILDING EXCALI VIA TURBOREPO AND WEBSOCKETS.
 # Turborepo starter
 
 This is an official starter Turborepo.
