@@ -4,9 +4,10 @@ import {CreateUserSchema,SignInSchema,RoomSchema} from "@repo/common/types"
 import {prisma} from "@repo/db/prisma"
 import jwt from "jsonwebtoken"
 import { middleware } from "./middleware.js"
-
+import cors from "cors"
 const app=express();
 app.use(express.json())
+app.use(cors())
 
 app.post("/signup",async (req,res)=>{
   const {success}=CreateUserSchema.safeParse(req.body);
@@ -41,7 +42,9 @@ app.post("/signup",async (req,res)=>{
   }
   catch(e)
   {
-    res.json({
+    console.error("Signup error:", e);
+
+    res.status(500).json({
       message:"SignUp failed"
     })
   }
@@ -57,27 +60,35 @@ app.post("/signin",async(req,res)=>{
     return ;
   }
 //@ts-ignore
-  const user = await prisma.newUser.findUnique({
-    where:{
-      email:req.body.email,
-      password:req.body.password
-    }
-  })
-  if(!user)
-  {
-    res.json({
-      message:"Incorrect Inputs"
+  try{
+    const user = await prisma.newUser.findUnique({
+      where:{
+        email:req.body.email,
+        password:req.body.password
+      }
     })
-    return;
+    if(!user)
+    {
+      res.json({
+        message:"Incorrect Inputs"
+      })
+      return;
+    }
+  
+    const token =jwt.sign({
+      userId:user.id
+    },JWT_SECRET);
+  
+    res.json({
+      token
+    })
   }
-
-  const token =jwt.sign({
-    userId:user.id
-  },JWT_SECRET);
-
-  res.json({
-    token
-  })
+  catch(e)
+  {
+    res.status(500).json({
+      message:"An error Occured"
+    })
+  }
 })
 
 app.post("/room",middleware,async(req,res)=>{
