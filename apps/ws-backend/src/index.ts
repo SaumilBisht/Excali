@@ -59,7 +59,13 @@ wss.on("connection",(ws,request)=>{
     })//when user is authenticated users array mei push khudke ws k sath
   
     ws.on("message",async (data)=>{
-      const parsedData=JSON.parse(data as unknown as string);
+      let parsedData;
+
+      if(typeof data!=="string") // agar as string nhi aaya to, whatever came->String,String->JSON object
+      {
+        parsedData=JSON.parse(data.toString());
+      }
+      else parsedData=JSON.parse(data);
   
       if(parsedData.type==="join_room")
       {
@@ -83,7 +89,7 @@ wss.on("connection",(ws,request)=>{
   
         await prisma.newChat.create({
           data: {
-            roomId,
+            roomId:Number(roomId),
             message,
             userId:userId
           }
