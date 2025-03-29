@@ -70,7 +70,7 @@ wss.on("connection",(ws,request)=>{
       if(parsedData.type==="join_room")
       {
         const user=users.find((x)=>x.ws===ws);
-        user?.rooms.push(parsedData.roomId)
+        user?.rooms.push(Number(parsedData.roomId))
       }
       else if(parsedData.type==="leave_room")
       {
@@ -79,17 +79,17 @@ wss.on("connection",(ws,request)=>{
         {
           return
         }
-        user.rooms=user.rooms.filter((x)=>x!==parsedData.roomId)//assign bhi krna zruri h
+        user.rooms=user.rooms.filter((x)=>x!==Number(parsedData.roomId))//assign bhi krna zruri h
       }
       else if(parsedData.type==="chat")
       {
-        const roomId=parsedData.roomId;
+        const roomId=Number(parsedData.roomId);
         const message=parsedData.message;
         
   
         await prisma.newChat.create({
           data: {
-            roomId:Number(roomId),
+            roomId:roomId,
             message,
             userId:userId
           }

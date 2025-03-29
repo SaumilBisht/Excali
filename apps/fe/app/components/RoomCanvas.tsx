@@ -17,6 +17,7 @@ export function RoomCanvas({roomId}: {
       console.error("No token found in localStorage.");
       return;
     }
+    console.log(storedToken)
 
     setToken(storedToken);
 
