@@ -8,9 +8,19 @@ export function RoomCanvas({roomId}: {
 }){
 
   const [socket,setSocket]=useState<WebSocket >()
+  const [token, setToken] = useState<string | null>(null);
   
     useEffect(()=>{
-      const ws=new WebSocket(`${WS_URL}?token${}`);
+
+    const storedToken = localStorage.getItem("token");
+    if (!storedToken) {
+      console.error("No token found in localStorage.");
+      return;
+    }
+
+    setToken(storedToken);
+
+      const ws=new WebSocket(`${WS_URL}?token=${storedToken}`);
       ws.onopen=()=>{
 
         setSocket(ws);

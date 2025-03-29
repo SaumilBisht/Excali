@@ -126,7 +126,6 @@ app.get("/chats/:roomId",async(req,res)=>{//chats ke aage /1 mein 1 is roomId
   {
     const roomId=Number(req.params.roomId);
     
-    console.log(req.params.roomId)
 
     const messages=await prisma.newChat.findMany({
       where:{
