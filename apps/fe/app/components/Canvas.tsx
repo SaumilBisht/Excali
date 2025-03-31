@@ -1,24 +1,35 @@
 "use client"
 import { useEffect, useRef, useState } from "react";
-import { initDraw } from "../../draw";
 import { IconButton } from "./IconButton";
 import { Circle, Pencil, RectangleHorizontal } from "lucide-react";
+import { Game } from "../../draw/Game";
 
-type Shape="circle" | "rect" | "pencil";
+export type Tool="circle" | "rect" | "pencil";
 
 export function Canvas({roomId,socket}: {
   roomId:string,
   socket:WebSocket
 }){
   const canvasRef=useRef<HTMLCanvasElement>(null);
-
-  const [selectedTool,setSelectedTool]=useState<Shape>("circle");
+  const [game,setGame]=useState<Game>();//stores CLASS OBJECT
+  const [selectedTool,setSelectedTool]=useState<Tool>("circle");
   
+
+    useEffect(() => {
+        game?.setTool(selectedTool);//object.function of class, udhr bhi tool change drawing
+    }, [selectedTool, game]);
+
+
     useEffect(()=>{
   
       if(canvasRef.current)
       {
-        initDraw(canvasRef.current,roomId,socket)
+        const g = new Game(canvasRef.current, roomId, socket);
+        setGame(g);
+
+        return () => {
+          g.destroy();//destroying 1 instance as in useEffect it mounts 2 times
+        }
       }
   
     },[canvasRef])
@@ -32,8 +43,8 @@ export function Canvas({roomId,socket}: {
 }
 
 function ToolBar({selectedTool,setSelectedTool}:{
-  selectedTool:Shape,
-  setSelectedTool:(s:Shape)=>void 
+  selectedTool:Tool,
+  setSelectedTool:(s:Tool)=>void 
 }){
   return(
     <div className="fixed top-4 left-12">
