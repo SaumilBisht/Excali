@@ -19,6 +19,12 @@ type Shape={
   startY:number,
   endX:number,
   endY:number
+} | {
+  type:"line",
+  startX:number,
+  startY:number,
+  endX:number,
+  endY:number
 }
 export class Game{
   private canvas: HTMLCanvasElement;
@@ -65,11 +71,17 @@ export class Game{
         this.ctx.strokeRect(shape.x,shape.y,shape.width,shape.height)
       }
       else if (shape.type === "circle") {
-        console.log(shape);
         this.ctx.beginPath();
         this.ctx.arc(shape.centerX, shape.centerY, Math.abs(shape.radius), 0, Math.PI * 2);
         this.ctx.stroke();
         this.ctx.closePath();                
+      }
+      else if(shape.type==="line")
+      {
+        this.ctx.beginPath();
+        this.ctx.moveTo(shape.startX,shape.startY);
+        this.ctx.lineTo(shape.endX,shape.endY);
+        this.ctx.stroke();
       }
     })
   }
@@ -134,6 +146,16 @@ export class Game{
             centerY: this.startY + height/2,
         }
     }
+    else if(selectedTool === "line")
+    {
+      shape={
+        type:"line",
+        startX:this.startX,
+        startY:this.startY,
+        endX:e.clientX,
+        endY:e.clientY
+      }
+    }
 
     if (!shape) {
         return;
@@ -168,6 +190,13 @@ export class Game{
             this.ctx.arc(centerX, centerY, Math.abs(radius), 0, Math.PI * 2);
             this.ctx.stroke();
             this.ctx.closePath();                
+        }
+        else if(selectedTool==="line")
+        {
+          this.ctx.beginPath();
+          this.ctx.moveTo(this.startX,this.startY);
+          this.ctx.lineTo(e.clientX,e.clientY);
+          this.ctx.stroke();
         }
     }
   }
