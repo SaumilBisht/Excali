@@ -134,7 +134,7 @@ app.get("/chats/:roomId",async(req,res)=>{//chats ke aage /1 mein 1 is roomId
       orderBy:{
         id:"asc"//id descending cuz id autoincrement thi aur baad ki chat pehle aa jaegi
       },
-      take:50
+      take:10000
     })
     console.log(messages);
     res.json({
