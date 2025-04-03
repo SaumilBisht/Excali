@@ -183,7 +183,7 @@ export function AuthPage({ isSignUp }: AuthPageProps) {
             <p className="mt-2 text-sm text-gray-600">
               
                 Dont Have an Account?{"  "}
-                <Link href="/" className="text-indigo-600 hover:text-indigo-500 font-medium">
+                <Link href="/signup" className="text-indigo-600 hover:text-indigo-500 font-medium">
                   Sign Up
                 </Link>
             </p>

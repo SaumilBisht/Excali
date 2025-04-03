@@ -91,7 +91,7 @@ app.post("/signin",async(req,res)=>{
   }
 })
 
-app.post("/room",middleware,async(req,res)=>{
+app.post("/createRoom",middleware,async(req,res)=>{
   const {success}=RoomSchema.safeParse(req.body);
   if(!success)
   {
@@ -151,17 +151,41 @@ app.get("/chats/:roomId",async(req,res)=>{//chats ke aage /1 mein 1 is roomId
   }
 })
 
-app.get("/room/:slug", async (req, res) => {
-  const slug = req.params.slug;
-  const room = await prisma.newRoom.findFirst({
+app.post("/joinRoom",middleware, async (req, res) => {
+
+  const {success}=RoomSchema.safeParse(req.body);
+  if(!success)
+  {
+    res.json({
+      message:"Incorrect Inputs"
+    })
+    return ;
+  }
+  const slug = req.body.name;
+  try{
+    const room = await prisma.newRoom.findFirst({
       where: {
           slug
       }
-  });
+    });
 
-  res.json({
-      room
-  })
+    if(!room)
+    {
+      res.json({
+        message:"No Such Room Exists"
+      })
+      return;
+    }
+    res.json({
+      roomId:room.id
+    })
+  }
+  catch(e)
+  {
+    res.json({
+      message:"Unexpected Error"
+    })
+  }
 })
 
 app.listen(3001);
