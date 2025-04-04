@@ -194,9 +194,9 @@ export class Game{
       if (selectedTool === "rect") {
           this.ctx.strokeRect(this.startX, this.startY, width, height);   
       } else if (selectedTool === "circle") {
-          const radius = Math.max(width, height) / 2;
           const centerX = this.startX + width/2;
           const centerY = this.startY + height/2;
+          const radius = Math.sqrt((width) ** 2 + (height) ** 2) / 2;
 
           this.ctx.beginPath();
           this.ctx.arc(centerX, centerY, Math.abs(radius), 0, Math.PI * 2);
@@ -247,7 +247,7 @@ export class Game{
             width
         }
     } else if (selectedTool === "circle") {
-        const radius = Math.max(width, height) / 2;
+        const radius = Math.sqrt((width) ** 2 + (height) ** 2) / 2;
         shape = {
             type: "circle",
             radius: radius,
