@@ -52,30 +52,36 @@ function ToolBar({selectedTool,setSelectedTool}:{
         <IconButton icon={<Pencil/>} 
           onClick={()=>{
             setSelectedTool("pencil")
-          }} activated={selectedTool==="pencil"}/>
+          }} activated={selectedTool==="pencil"}
+          text={"Pencil"}/>
         <IconButton icon={<RectangleHorizontal/>} 
           onClick={()=>{
             setSelectedTool("rect")
-          }} activated={selectedTool==="rect"}/>
+          }} activated={selectedTool==="rect"}
+          text={"Rectangle"}/>
         <IconButton icon={<Circle/>} 
           onClick={()=>{
             setSelectedTool("circle")
-          }} activated={selectedTool==="circle"}/>
+          }} activated={selectedTool==="circle"}
+          text={"Circle"}/>
         <IconButton icon={<Slash/>}
           onClick={()=>{
             setSelectedTool("line")
           }}
-          activated={selectedTool==="line"}/>
+          activated={selectedTool==="line"}
+          text={"Line"}/>
         <IconButton icon={<Triangle/>}
           onClick={()=>{
             setSelectedTool("tri")
           }}
-          activated={selectedTool==="tri"}/>
+          activated={selectedTool==="tri"}
+          text={"Triangle"}/>
         <IconButton icon={<CircleEllipsis/>}
           onClick={()=>{
             setSelectedTool("oval")
           }}
-          activated={selectedTool==="oval"}/>
+          activated={selectedTool==="oval"}
+          text={"Oval"}/>
       </div>
     </div>
   )
