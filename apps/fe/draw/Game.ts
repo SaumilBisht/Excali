@@ -22,6 +22,12 @@ type Shape={
   startY:number,
   endX:number,
   endY:number
+} | {
+  type:"tri",
+  startX:number,
+  startY:number,
+  endX:number,
+  endY:number
 }
 export class Game{
   private canvas: HTMLCanvasElement;
@@ -91,6 +97,17 @@ export class Game{
         this.ctx.stroke();
         this.ctx.closePath();
       }
+      else if(shape.type==="tri")
+      {
+        const h=shape.endY-shape.startY;
+        const w=shape.endX-shape.startX;
+        this.ctx.beginPath();
+        this.ctx.moveTo(shape.startX,shape.startY+h);
+        this.ctx.lineTo(shape.startX+w,shape.startY+h);
+        this.ctx.lineTo(shape.startX+w/2,shape.startY);
+        this.ctx.closePath();
+        this.ctx.stroke();
+      }
     })
   }
 
@@ -145,9 +162,9 @@ export class Game{
       this.ctx.beginPath();
       const lastPoint = this.queue[this.queue.length - 2]; // Get previous point
       if (lastPoint) {
-      this.ctx.moveTo(lastPoint.x, lastPoint.y);
-      this.ctx.lineTo(e.clientX, e.clientY);
-      this.ctx.stroke();
+        this.ctx.moveTo(lastPoint.x, lastPoint.y);
+        this.ctx.lineTo(e.clientX, e.clientY);
+        this.ctx.stroke();
       }
 
       
@@ -176,6 +193,15 @@ export class Game{
         this.ctx.beginPath();
         this.ctx.moveTo(this.startX,this.startY);
         this.ctx.lineTo(e.clientX,e.clientY);
+        this.ctx.stroke();
+      }
+      else if(selectedTool==="tri")
+      {
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.startX,this.startY+height);
+        this.ctx.lineTo(this.startX+width,this.startY+height);
+        this.ctx.lineTo(this.startX+width/2,this.startY);
+        this.ctx.closePath();
         this.ctx.stroke();
       }
     }
@@ -218,12 +244,22 @@ export class Game{
       }
     }
     
-    else if (this.selectedTool === "pencil") {
+    else if (selectedTool === "pencil") {
       shape = {
         type: "pencil",
         points: [...this.queue],
       };
       this.queue = [];//for next empty
+    }
+    else if(selectedTool==="tri")
+    {
+      shape={
+        type:"tri",
+        startX:this.startX,
+        startY:this.startY,
+        endX:e.clientX,
+        endY:e.clientY
+      }
     }
 
     if (!shape) {
