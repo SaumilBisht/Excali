@@ -1,10 +1,10 @@
 "use client"
 import { useEffect, useRef, useState } from "react";
 import { IconButton } from "./IconButton";
-import { Circle, CircleEllipsis, LucideEllipsis, Pencil, RectangleHorizontal, Slash, Triangle } from "lucide-react";
+import { Circle, CircleEllipsis, Eraser, LucideEllipsis, Pencil, RectangleHorizontal, Slash, Triangle } from "lucide-react";
 import { Game } from "../../draw/Game";
 
-export type Tool="circle" | "rect" | "pencil" | "line"| "tri" | "oval";
+export type Tool="circle" | "rect" | "pencil" | "line"| "tri" | "oval" | "eraser";
 
 export function Canvas({roomId,socket}: {
   roomId:string,
@@ -82,6 +82,12 @@ function ToolBar({selectedTool,setSelectedTool}:{
           }}
           activated={selectedTool==="oval"}
           text={"Oval"}/>
+        <IconButton icon={<Eraser/>}
+          onClick={()=>{
+            setSelectedTool("eraser")
+          }}
+          activated={selectedTool==="eraser"}
+          text={"Eraser"}/>
       </div>
     </div>
   )

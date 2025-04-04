@@ -34,7 +34,11 @@ type Shape={
   startY:number,
   endX:number,
   endY:number
+} | {
+  type: "eraser",
+  points: { x: number; y: number }[]
 }
+
 export class Game{
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
@@ -75,26 +79,13 @@ export class Game{
     this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)//pura clear pehle
     this.ctx.fillStyle="rgba(0,0,0)";//black style fill
     this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height)// black canvas
+
     this.existingShapes.map((shape)=>{//rerendering
-      if(shape.type==="rect")//purane write
+      if(shape.type==="eraser")
       {
-        this.ctx.strokeStyle="rgba(255,255,255)"
-        this.ctx.strokeRect(shape.x,shape.y,shape.width,shape.height)
-      }
-      else if (shape.type === "circle") {
-        this.ctx.beginPath();
-        this.ctx.arc(shape.centerX, shape.centerY, Math.abs(shape.radius), 0, Math.PI * 2);
-        this.ctx.stroke();
-        this.ctx.closePath();                
-      }
-      else if(shape.type==="line")
-      {
-        this.ctx.beginPath();
-        this.ctx.moveTo(shape.startX,shape.startY);
-        this.ctx.lineTo(shape.endX,shape.endY);
-        this.ctx.stroke();
-      }
-      else if (shape.type === "pencil") {
+        
+        this.ctx.strokeStyle = "black";
+        this.ctx.lineWidth = 10; 
         this.ctx.beginPath();
         shape.points.forEach((point, index) => {
           if (index === 0) this.ctx.moveTo(point.x, point.y);
@@ -103,25 +94,55 @@ export class Game{
         this.ctx.stroke();
         this.ctx.closePath();
       }
-      else if(shape.type==="tri")
-      {
-        const h=shape.endY-shape.startY;
-        const w=shape.endX-shape.startX;
-        this.ctx.beginPath();
-        this.ctx.moveTo(shape.startX,shape.startY+h);
-        this.ctx.lineTo(shape.startX+w,shape.startY+h);
-        this.ctx.lineTo(shape.startX+w/2,shape.startY);
-        this.ctx.closePath();
-        this.ctx.stroke();
-      }
-      else if(shape.type==="oval")
-      {
-        const h=shape.endY-shape.startY;
-        const w=shape.endX-shape.startX;
-        this.ctx.beginPath();
-        this.ctx.ellipse(shape.startX+w/2,shape.startY+h/2,Math.abs(w/2),Math.abs(h/2),0,0,Math.PI*2);
-        this.ctx.stroke()
-        this.ctx.closePath();
+      else{
+        this.ctx.strokeStyle = "white";
+        this.ctx.lineWidth = 2;
+        if(shape.type==="rect")//purane write
+        {
+          this.ctx.strokeRect(shape.x,shape.y,shape.width,shape.height)
+        }
+        else if (shape.type === "circle") {
+          this.ctx.beginPath();
+          this.ctx.arc(shape.centerX, shape.centerY, Math.abs(shape.radius), 0, Math.PI * 2);
+          this.ctx.stroke();
+          this.ctx.closePath();                
+        }
+        else if(shape.type==="line")
+        {
+          this.ctx.beginPath();
+          this.ctx.moveTo(shape.startX,shape.startY);
+          this.ctx.lineTo(shape.endX,shape.endY);
+          this.ctx.stroke();
+        }
+        else if (shape.type === "pencil") {
+          this.ctx.beginPath();
+          shape.points.forEach((point, index) => {
+            if (index === 0) this.ctx.moveTo(point.x, point.y);
+            else this.ctx.lineTo(point.x, point.y);
+          });
+          this.ctx.stroke();
+          this.ctx.closePath();
+        }
+        else if(shape.type==="tri")
+        {
+          const h=shape.endY-shape.startY;
+          const w=shape.endX-shape.startX;
+          this.ctx.beginPath();
+          this.ctx.moveTo(shape.startX,shape.startY+h);
+          this.ctx.lineTo(shape.startX+w,shape.startY+h);
+          this.ctx.lineTo(shape.startX+w/2,shape.startY);
+          this.ctx.closePath();
+          this.ctx.stroke();
+        }
+        else if(shape.type==="oval")
+        {
+          const h=shape.endY-shape.startY;
+          const w=shape.endX-shape.startX;
+          this.ctx.beginPath();
+          this.ctx.ellipse(shape.startX+w/2,shape.startY+h/2,Math.abs(w/2),Math.abs(h/2),0,0,Math.PI*2);
+          this.ctx.stroke()
+          this.ctx.closePath();
+        }
       }
     })
   }
@@ -161,34 +182,40 @@ export class Game{
     this.startX = e.clientX
     this.startY = e.clientY
 
-    if (this.selectedTool === "pencil") {
+    if (this.selectedTool === "pencil" || this.selectedTool==="eraser") {
       this.isDrawing = true;
       this.queue = [{ x: this.startX, y: this.startY }];
       this.ctx.beginPath();
       this.ctx.moveTo(this.startX, this.startY);
+
+      this.ctx.strokeStyle = this.selectedTool === "eraser" ? "black" : "white";
+      this.ctx.lineWidth = this.selectedTool === "eraser" ? 10 : 2;
     }
   } 
   mouseMoveHandler = (e: { clientX: number; clientY: number; }) => {
     
     if(!this.clicked)return;
 
-    if (this.selectedTool === "pencil" && this.isDrawing) {
-      this.queue.push({ x: e.clientX, y: e.clientY });
-      this.ctx.beginPath();
-      const lastPoint = this.queue[this.queue.length - 2]; // Get previous point
+    if ((this.selectedTool === "pencil" || this.selectedTool==="eraser" )&& this.isDrawing) {
+      const newPoint = { x: e.clientX, y: e.clientY };
+      const lastPoint = this.queue[this.queue.length - 1];
+
       if (lastPoint) {
+        this.ctx.beginPath();
         this.ctx.moveTo(lastPoint.x, lastPoint.y);
-        this.ctx.lineTo(e.clientX, e.clientY);
+        this.ctx.lineTo(newPoint.x, newPoint.y);
         this.ctx.stroke();
       }
 
-      
+      this.queue.push(newPoint);
     }
     else{
       const width = e.clientX - this.startX;
       const height = e.clientY - this.startY;
       this.clearCanvas();
-      this.ctx.strokeStyle = "rgba(255, 255, 255)"
+
+      this.ctx.strokeStyle = "white"
+      this.ctx.lineWidth=2;
       const selectedTool = this.selectedTool;
 
       if (selectedTool === "rect") {
@@ -237,6 +264,7 @@ export class Game{
 
     const selectedTool = this.selectedTool;
     let shape: Shape | null = null;
+    
     if (selectedTool === "rect") {
 
         shape = {
@@ -292,6 +320,15 @@ export class Game{
         endX:e.clientX,
         endY:e.clientY
       }
+    }
+    else if (selectedTool === "eraser") {
+      shape = {
+         type: "eraser", 
+         points: [...this.queue] 
+      };
+      this.queue = [];
+      this.ctx.strokeStyle = "white"; // Reset
+      this.ctx.lineWidth = 2;
     }
 
     if (!shape) {
