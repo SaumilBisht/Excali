@@ -28,6 +28,12 @@ type Shape={
   startY:number,
   endX:number,
   endY:number
+} | {
+  type:"oval",
+  startX:number,
+  startY:number,
+  endX:number,
+  endY:number
 }
 export class Game{
   private canvas: HTMLCanvasElement;
@@ -107,6 +113,15 @@ export class Game{
         this.ctx.lineTo(shape.startX+w/2,shape.startY);
         this.ctx.closePath();
         this.ctx.stroke();
+      }
+      else if(shape.type==="oval")
+      {
+        const h=shape.endY-shape.startY;
+        const w=shape.endX-shape.startX;
+        this.ctx.beginPath();
+        this.ctx.ellipse(shape.startX+w/2,shape.startY+h/2,Math.abs(w/2),Math.abs(h/2),0,0,Math.PI*2);
+        this.ctx.stroke()
+        this.ctx.closePath();
       }
     })
   }
@@ -204,6 +219,13 @@ export class Game{
         this.ctx.closePath();
         this.ctx.stroke();
       }
+      else if(selectedTool==="oval")
+      {
+        this.ctx.beginPath();
+        this.ctx.ellipse(this.startX+width/2,this.startY+height/2,Math.abs(width/2),Math.abs(height/2),0,0,Math.PI*2);
+        this.ctx.stroke()
+        this.ctx.closePath();
+      }
     }
   }
   mouseUpHandler = (e: { clientX: number; clientY: number; }) => {
@@ -255,6 +277,16 @@ export class Game{
     {
       shape={
         type:"tri",
+        startX:this.startX,
+        startY:this.startY,
+        endX:e.clientX,
+        endY:e.clientY
+      }
+    }
+    else if(selectedTool==="oval")
+    {
+      shape={
+        type:"oval",
         startX:this.startX,
         startY:this.startY,
         endX:e.clientX,
