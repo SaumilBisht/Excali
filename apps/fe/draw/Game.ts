@@ -53,6 +53,16 @@ export class Game{
   private queue: { x: number; y: number }[] = [];
   private isDrawing = false;
 
+
+  private offsetX = 0;
+  private offsetY = 0;
+
+  private isPanning = false;
+  private panStartX = 0;
+  private panStartY = 0;
+
+  private keysPressed = new Set<string>();
+
   constructor(canvas:HTMLCanvasElement,roomId:string,socket:WebSocket)
   {
     this.roomId=roomId;
@@ -77,8 +87,13 @@ export class Game{
 
   clearCanvas(){
     this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)//pura clear pehle
-    this.ctx.fillStyle="rgba(0,0,0)";//black style fill
-    this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height)// black canvas
+
+    this.ctx.save();
+    this.ctx.translate(this.offsetX, this.offsetY);
+
+    this.ctx.fillStyle="black";
+
+    this.ctx.fillRect(-this.offsetX, -this.offsetY, this.canvas.width, this.canvas.height);
 
     this.existingShapes.map((shape)=>{//rerendering
       if(shape.type==="eraser")
@@ -145,6 +160,7 @@ export class Game{
         }
       }
     })
+    this.ctx.restore();
   }
 
   setTool(tool:Tool) {
@@ -178,6 +194,14 @@ export class Game{
   //All mousclick and mouseMove handler Arrow functions
 
   mouseDownHandler = (e: { clientX: number; clientY: number; }) => {
+
+    if (this.keysPressed.has(" ")) {
+      this.isPanning = true;
+      this.panStartX = e.clientX;
+      this.panStartY = e.clientY;
+      return;
+    }
+
     this.clicked = true
     this.startX = e.clientX
     this.startY = e.clientY
@@ -194,6 +218,17 @@ export class Game{
   } 
   mouseMoveHandler = (e: { clientX: number; clientY: number; }) => {
     
+    if (this.isPanning) {
+      const dx = e.clientX - this.panStartX;
+      const dy = e.clientY - this.panStartY;
+      this.offsetX += dx;
+      this.offsetY += dy;
+      this.panStartX = e.clientX;
+      this.panStartY = e.clientY;
+      this.clearCanvas(); // redraw everything with new offset
+      return;
+    }
+
     if(!this.clicked)return;
 
     if ((this.selectedTool === "pencil" || this.selectedTool==="eraser" )&& this.isDrawing) {
@@ -256,6 +291,12 @@ export class Game{
     }
   }
   mouseUpHandler = (e: { clientX: number; clientY: number; }) => {
+
+    if (this.isPanning) {
+      this.isPanning = false;
+      return;
+    }
+
     this.clicked = false
     this.isDrawing = false;
 
@@ -269,8 +310,8 @@ export class Game{
 
         shape = {
             type: "rect",
-            x: this.startX,
-            y: this.startY,
+            x: this.startX-this.offsetX,
+            y: this.startY-this.offsetY,
             height,
             width
         }
@@ -279,25 +320,28 @@ export class Game{
         shape = {
             type: "circle",
             radius: radius,
-            centerX: this.startX + width/2,
-            centerY: this.startY + height/2,
+            centerX: this.startX-this.offsetX + width/2,
+            centerY: this.startY-this.offsetY + height/2,
         }
     }
     else if(selectedTool === "line")
     {
       shape={
         type:"line",
-        startX:this.startX,
-        startY:this.startY,
-        endX:e.clientX,
-        endY:e.clientY
+        startX:this.startX-this.offsetX,
+        startY:this.startY-this.offsetY,
+        endX:e.clientX-this.offsetX,
+        endY:e.clientY-this.offsetY
       }
     }
     
     else if (selectedTool === "pencil") {
       shape = {
         type: "pencil",
-        points: [...this.queue],
+        points: this.queue.map(p => ({
+          x: p.x - this.offsetX,
+          y: p.y - this.offsetY
+        })),
       };
       this.queue = [];//for next empty
     }
@@ -305,26 +349,29 @@ export class Game{
     {
       shape={
         type:"tri",
-        startX:this.startX,
-        startY:this.startY,
-        endX:e.clientX,
-        endY:e.clientY
+        startX:this.startX-this.offsetX,
+        startY:this.startY-this.offsetY,
+        endX:e.clientX-this.offsetX,
+        endY:e.clientY-this.offsetY
       }
     }
     else if(selectedTool==="oval")
     {
       shape={
         type:"oval",
-        startX:this.startX,
-        startY:this.startY,
-        endX:e.clientX,
-        endY:e.clientY
+        startX:this.startX-this.offsetX,
+        startY:this.startY-this.offsetY,
+        endX:e.clientX-this.offsetX,
+        endY:e.clientY-this.offsetY
       }
     }
     else if (selectedTool === "eraser") {
       shape = {
          type: "eraser", 
-         points: [...this.queue] 
+         points: this.queue.map(p => ({
+          x: p.x - this.offsetX,
+          y: p.y - this.offsetY
+        }))
       };
       this.queue = [];
       this.ctx.strokeStyle = "white"; // Reset
@@ -352,6 +399,17 @@ export class Game{
 
       this.canvas.addEventListener("mouseup", this.mouseUpHandler)
 
-      this.canvas.addEventListener("mousemove", this.mouseMoveHandler)    
+      this.canvas.addEventListener("mousemove", this.mouseMoveHandler)   
+      
+      window.addEventListener("keydown", this.keyDownHandler);
+      window.addEventListener("keyup", this.keyUpHandler);  
   }
+
+  keyDownHandler = (e: KeyboardEvent) => {
+    this.keysPressed.add(e.key);
+  };
+  
+  keyUpHandler = (e: KeyboardEvent) => {
+    this.keysPressed.delete(e.key);
+  };
 }
