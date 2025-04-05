@@ -61,6 +61,8 @@ export class Game{
   private panStartX = 0;
   private panStartY = 0;
 
+  private scale = 1;
+
   private keysPressed = new Set<string>();
 
   constructor(canvas:HTMLCanvasElement,roomId:string,socket:WebSocket)
@@ -91,9 +93,12 @@ export class Game{
     this.ctx.save();
     this.ctx.translate(this.offsetX, this.offsetY);
 
-    this.ctx.fillStyle="black";
+    this.ctx.scale(this.scale, this.scale); // Apply zoom here
 
-    this.ctx.fillRect(-this.offsetX, -this.offsetY, this.canvas.width, this.canvas.height);
+    this.ctx.fillStyle = "black";
+
+    this.ctx.fillRect(-this.offsetX / this.scale, -this.offsetY / this.scale, this.canvas.width / this.scale, this.canvas.height / this.scale);
+  
 
     this.existingShapes.map((shape)=>{//rerendering
       if(shape.type==="eraser")
@@ -197,14 +202,14 @@ export class Game{
 
     if (this.keysPressed.has(" ")) {
       this.isPanning = true;
-      this.panStartX = e.clientX;
-      this.panStartY = e.clientY;
+      this.panStartX = e.clientX/ this.scale;
+      this.panStartY = e.clientY/ this.scale;
       return;
     }
 
     this.clicked = true
-    this.startX = e.clientX
-    this.startY = e.clientY
+    this.startX = e.clientX/ this.scale;
+    this.startY = e.clientY/ this.scale;
 
     if (this.selectedTool === "pencil" || this.selectedTool==="eraser") {
       this.isDrawing = true;
@@ -219,12 +224,12 @@ export class Game{
   mouseMoveHandler = (e: { clientX: number; clientY: number; }) => {
     
     if (this.isPanning) {
-      const dx = e.clientX - this.panStartX;
-      const dy = e.clientY - this.panStartY;
+      const dx = e.clientX/ this.scale - this.panStartX;
+      const dy = e.clientY/ this.scale - this.panStartY;
       this.offsetX += dx;
       this.offsetY += dy;
-      this.panStartX = e.clientX;
-      this.panStartY = e.clientY;
+      this.panStartX = e.clientX/ this.scale;
+      this.panStartY = e.clientY/ this.scale;
       this.clearCanvas(); // redraw everything with new offset
       return;
     }
@@ -232,7 +237,7 @@ export class Game{
     if(!this.clicked)return;
 
     if ((this.selectedTool === "pencil" || this.selectedTool==="eraser" )&& this.isDrawing) {
-      const newPoint = { x: e.clientX, y: e.clientY };
+      const newPoint = { x: e.clientX/ this.scale, y: e.clientY/ this.scale };
       const lastPoint = this.queue[this.queue.length - 1];
 
       if (lastPoint) {
@@ -245,8 +250,8 @@ export class Game{
       this.queue.push(newPoint);
     }
     else{
-      const width = e.clientX - this.startX;
-      const height = e.clientY - this.startY;
+      const width = e.clientX/ this.scale - this.startX;
+      const height = e.clientY/ this.scale - this.startY;
       this.clearCanvas();
 
       this.ctx.strokeStyle = "white"
@@ -269,7 +274,7 @@ export class Game{
       {
         this.ctx.beginPath();
         this.ctx.moveTo(this.startX,this.startY);
-        this.ctx.lineTo(e.clientX,e.clientY);
+        this.ctx.lineTo(e.clientX/ this.scale,e.clientY/ this.scale);
         this.ctx.stroke();
       }
       else if(selectedTool==="tri")
@@ -300,8 +305,8 @@ export class Game{
     this.clicked = false
     this.isDrawing = false;
 
-    const width = e.clientX - this.startX;
-    const height = e.clientY - this.startY;
+    const width = e.clientX/ this.scale - this.startX;
+    const height = e.clientY/ this.scale - this.startY;
 
     const selectedTool = this.selectedTool;
     let shape: Shape | null = null;
@@ -310,8 +315,8 @@ export class Game{
 
         shape = {
             type: "rect",
-            x: this.startX-this.offsetX,
-            y: this.startY-this.offsetY,
+            x: this.startX-this.offsetX/ this.scale,
+            y: this.startY-this.offsetY/ this.scale,
             height,
             width
         }
@@ -320,18 +325,18 @@ export class Game{
         shape = {
             type: "circle",
             radius: radius,
-            centerX: this.startX-this.offsetX + width/2,
-            centerY: this.startY-this.offsetY + height/2,
+            centerX: this.startX-this.offsetX/ this.scale + width/2,
+            centerY: this.startY-this.offsetY / this.scale+ height/2,
         }
     }
     else if(selectedTool === "line")
     {
       shape={
         type:"line",
-        startX:this.startX-this.offsetX,
-        startY:this.startY-this.offsetY,
-        endX:e.clientX-this.offsetX,
-        endY:e.clientY-this.offsetY
+        startX:this.startX-this.offsetX/ this.scale,
+        startY:this.startY-this.offsetY/ this.scale,
+        endX:e.clientX-this.offsetX/ this.scale,
+        endY:e.clientY-this.offsetY/ this.scale
       }
     }
     
@@ -339,8 +344,8 @@ export class Game{
       shape = {
         type: "pencil",
         points: this.queue.map(p => ({
-          x: p.x - this.offsetX,
-          y: p.y - this.offsetY
+          x: p.x - this.offsetX/ this.scale,
+          y: p.y - this.offsetY/ this.scale
         })),
       };
       this.queue = [];//for next empty
@@ -349,28 +354,28 @@ export class Game{
     {
       shape={
         type:"tri",
-        startX:this.startX-this.offsetX,
-        startY:this.startY-this.offsetY,
-        endX:e.clientX-this.offsetX,
-        endY:e.clientY-this.offsetY
+        startX:this.startX-this.offsetX/ this.scale,
+        startY:this.startY-this.offsetY/ this.scale,
+        endX:e.clientX-this.offsetX/ this.scale,
+        endY:e.clientY-this.offsetY/ this.scale
       }
     }
     else if(selectedTool==="oval")
     {
       shape={
         type:"oval",
-        startX:this.startX-this.offsetX,
-        startY:this.startY-this.offsetY,
-        endX:e.clientX-this.offsetX,
-        endY:e.clientY-this.offsetY
+        startX:this.startX-this.offsetX/ this.scale,
+        startY:this.startY-this.offsetY/ this.scale,
+        endX:e.clientX/ this.scale-this.offsetX/ this.scale,
+        endY:e.clientY/ this.scale-this.offsetY/ this.scale
       }
     }
     else if (selectedTool === "eraser") {
       shape = {
          type: "eraser", 
          points: this.queue.map(p => ({
-          x: p.x - this.offsetX,
-          y: p.y - this.offsetY
+          x: p.x - this.offsetX/ this.scale,
+          y: p.y - this.offsetY/ this.scale
         }))
       };
       this.queue = [];
@@ -403,10 +408,19 @@ export class Game{
       
       window.addEventListener("keydown", this.keyDownHandler);
       window.addEventListener("keyup", this.keyUpHandler);  
+      
   }
 
   keyDownHandler = (e: KeyboardEvent) => {
     this.keysPressed.add(e.key);
+
+    if (e.key === "+") {
+      this.scale *= 1.1; // Zoom in
+      this.clearCanvas();
+    } else if (e.key === "-") {
+      this.scale /= 1.1; // Zoom out
+      this.clearCanvas();
+    }
   };
   
   keyUpHandler = (e: KeyboardEvent) => {
