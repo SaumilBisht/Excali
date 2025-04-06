@@ -1,10 +1,11 @@
 "use client"
 import { useEffect, useRef, useState } from "react";
 import { IconButton } from "./IconButton";
-import { Circle, CircleEllipsis, Eraser, LucideEllipsis, Pencil, RectangleHorizontal, Slash, Triangle } from "lucide-react";
+import { ArrowUpLeft, Circle, CircleEllipsis, Eraser, LucideEllipsis, Palette, Pencil, RectangleHorizontal, Slash, Triangle } from "lucide-react";
 import { Game } from "../../draw/Game";
+import { HexColorPicker } from "react-colorful";
 
-export type Tool="circle" | "rect" | "pencil" | "line"| "tri" | "oval" | "eraser";
+export type Tool="circle" | "rect" | "pencil" | "line"| "tri" | "oval" | "eraser" | "select";
 
 export function Canvas({roomId,socket}: {
   roomId:string,
@@ -13,11 +14,13 @@ export function Canvas({roomId,socket}: {
   const canvasRef=useRef<HTMLCanvasElement>(null);
   const [game,setGame]=useState<Game>();//stores CLASS OBJECT
   const [selectedTool,setSelectedTool]=useState<Tool>("circle");
-  
+  const [selectedColor,setSelectedColor]=useState<string>("white")
+
 
     useEffect(() => {
         game?.setTool(selectedTool);//object.function of class, udhr bhi tool change drawing
-    }, [selectedTool, game]);
+        game?.setColor(selectedColor);
+    }, [selectedTool, game,selectedColor]);
 
 
     useEffect(()=>{
@@ -37,17 +40,20 @@ export function Canvas({roomId,socket}: {
     return(
       <div className="h-screen overflow-hidden bg-black">
         <canvas ref={canvasRef} width={window.innerWidth} height={window.innerHeight} className="border border-black text-black"></canvas>
-        <ToolBar selectedTool={selectedTool} setSelectedTool={setSelectedTool}/>
+        <ToolBar selectedTool={selectedTool} setSelectedTool={setSelectedTool} selectedColor={selectedColor} setSelectedColor={setSelectedColor}/>
       </div>
     )
 }
 
-function ToolBar({selectedTool,setSelectedTool}:{
+function ToolBar({selectedTool,setSelectedTool,selectedColor,setSelectedColor}:{
   selectedTool:Tool,
-  setSelectedTool:(s:Tool)=>void 
+  setSelectedTool:(s:Tool)=>void ,
+  selectedColor:string,
+  setSelectedColor:(color: string)=>void
 }){
+  const [showColorPicker, setShowColorPicker] = useState(false);
   return(
-    <div className="fixed top-4 left-12">
+    <div className="fixed top-4 left-8">
       <div className="flex">
         <IconButton icon={<Pencil/>} 
           onClick={()=>{
@@ -88,6 +94,28 @@ function ToolBar({selectedTool,setSelectedTool}:{
           }}
           activated={selectedTool==="eraser"}
           text={"Eraser"}/>
+        <IconButton icon={<ArrowUpLeft/>}
+          onClick={()=>{
+            setSelectedTool("select")
+          }}
+          activated={selectedTool==="select"}
+          text={"Selection"}/>
+        <div className="relative">
+          <IconButton
+            icon={<Palette />}
+            onClick={() => setShowColorPicker(!showColorPicker)}
+            activated={showColorPicker}
+            text="Color Picker"
+          />
+
+          {showColorPicker && (
+            <div className="absolute top-14 left-1/2 -translate-x-1/2 z-50 bg-white p-2 rounded-md shadow-lg">
+              <HexColorPicker color={selectedColor} onChange={setSelectedColor} />
+            </div>
+          )}
+        </div>
+
+
       </div>
     </div>
   )

@@ -7,33 +7,39 @@ type Shape={
   y:number;
   height:number;
   width:number;
+  color:string
 } | {
   type:"circle",
   centerX:number;
   centerY:number;
   radius:number;
+  color:string;
 } |
 {
   type:"pencil",
-  points: { x: number; y: number }[]
+  points: { x: number; y: number }[];
+  color:string
 } | {
   type:"line",
   startX:number,
   startY:number,
   endX:number,
   endY:number
+  color:string
 } | {
   type:"tri",
   startX:number,
   startY:number,
   endX:number,
   endY:number
+  color:string
 } | {
   type:"oval",
   startX:number,
   startY:number,
   endX:number,
   endY:number
+  color:string
 } | {
   type: "eraser",
   points: { x: number; y: number }[]
@@ -60,6 +66,7 @@ export class Game{
   private isPanning = false;
   private panStartX = 0;
   private panStartY = 0;
+  private selectedColor="white"
 
   private scale = 1;
 
@@ -115,13 +122,14 @@ export class Game{
         this.ctx.closePath();
       }
       else{
-        this.ctx.strokeStyle = "white";
         this.ctx.lineWidth = 2;
         if(shape.type==="rect")//purane write
         {
+          this.ctx.strokeStyle = shape.color;
           this.ctx.strokeRect(shape.x,shape.y,shape.width,shape.height)
         }
         else if (shape.type === "circle") {
+          this.ctx.strokeStyle = shape.color;
           this.ctx.beginPath();
           this.ctx.arc(shape.centerX, shape.centerY, Math.abs(shape.radius), 0, Math.PI * 2);
           this.ctx.stroke();
@@ -129,12 +137,14 @@ export class Game{
         }
         else if(shape.type==="line")
         {
+          this.ctx.strokeStyle = shape.color;
           this.ctx.beginPath();
           this.ctx.moveTo(shape.startX,shape.startY);
           this.ctx.lineTo(shape.endX,shape.endY);
           this.ctx.stroke();
         }
         else if (shape.type === "pencil") {
+          this.ctx.strokeStyle = shape.color;
           this.ctx.beginPath();
           shape.points.forEach((point, index) => {
             if (index === 0) this.ctx.moveTo(point.x, point.y);
@@ -145,6 +155,7 @@ export class Game{
         }
         else if(shape.type==="tri")
         {
+          this.ctx.strokeStyle = shape.color;
           const h=shape.endY-shape.startY;
           const w=shape.endX-shape.startX;
           this.ctx.beginPath();
@@ -156,6 +167,7 @@ export class Game{
         }
         else if(shape.type==="oval")
         {
+          this.ctx.strokeStyle = shape.color;
           const h=shape.endY-shape.startY;
           const w=shape.endX-shape.startX;
           this.ctx.beginPath();
@@ -170,6 +182,9 @@ export class Game{
 
   setTool(tool:Tool) {
     this.selectedTool = tool;
+  }
+  setColor(color: string) {
+    this.selectedColor = color;
   }
 
   initHandlers()
@@ -217,7 +232,8 @@ export class Game{
       this.ctx.beginPath();
       this.ctx.moveTo(this.startX, this.startY);
 
-      this.ctx.strokeStyle = this.selectedTool === "eraser" ? "black" : "white";
+      this.ctx.strokeStyle = this.selectedTool === "eraser" ? "black" : this.selectedColor;
+
       this.ctx.lineWidth = this.selectedTool === "eraser" ? 10 : 2;
     }
   } 
@@ -239,6 +255,7 @@ export class Game{
     if ((this.selectedTool === "pencil" || this.selectedTool==="eraser" )&& this.isDrawing) {
       const newPoint = { x: e.clientX/ this.scale, y: e.clientY/ this.scale };
       const lastPoint = this.queue[this.queue.length - 1];
+      this.ctx.strokeStyle = this.selectedTool === "eraser" ? "black" : this.selectedColor;
 
       if (lastPoint) {
         this.ctx.beginPath();
@@ -254,7 +271,8 @@ export class Game{
       const height = e.clientY/ this.scale - this.startY;
       this.clearCanvas();
 
-      this.ctx.strokeStyle = "white"
+      this.ctx.strokeStyle =this.selectedColor;
+
       this.ctx.lineWidth=2;
       const selectedTool = this.selectedTool;
 
@@ -318,7 +336,8 @@ export class Game{
             x: this.startX-this.offsetX/ this.scale,
             y: this.startY-this.offsetY/ this.scale,
             height,
-            width
+            width,
+            color:this.selectedColor
         }
     } else if (selectedTool === "circle") {
         const radius = Math.sqrt((width) ** 2 + (height) ** 2) / 2;
@@ -327,6 +346,7 @@ export class Game{
             radius: radius,
             centerX: this.startX-this.offsetX/ this.scale + width/2,
             centerY: this.startY-this.offsetY / this.scale+ height/2,
+            color:this.selectedColor
         }
     }
     else if(selectedTool === "line")
@@ -336,7 +356,8 @@ export class Game{
         startX:this.startX-this.offsetX/ this.scale,
         startY:this.startY-this.offsetY/ this.scale,
         endX:e.clientX-this.offsetX/ this.scale,
-        endY:e.clientY-this.offsetY/ this.scale
+        endY:e.clientY-this.offsetY/ this.scale,
+        color:this.selectedColor
       }
     }
     
@@ -347,6 +368,7 @@ export class Game{
           x: p.x - this.offsetX/ this.scale,
           y: p.y - this.offsetY/ this.scale
         })),
+        color:this.selectedColor
       };
       this.queue = [];//for next empty
     }
@@ -357,7 +379,8 @@ export class Game{
         startX:this.startX-this.offsetX/ this.scale,
         startY:this.startY-this.offsetY/ this.scale,
         endX:e.clientX-this.offsetX/ this.scale,
-        endY:e.clientY-this.offsetY/ this.scale
+        endY:e.clientY-this.offsetY/ this.scale,
+        color:this.selectedColor
       }
     }
     else if(selectedTool==="oval")
@@ -367,7 +390,8 @@ export class Game{
         startX:this.startX-this.offsetX/ this.scale,
         startY:this.startY-this.offsetY/ this.scale,
         endX:e.clientX/ this.scale-this.offsetX/ this.scale,
-        endY:e.clientY/ this.scale-this.offsetY/ this.scale
+        endY:e.clientY/ this.scale-this.offsetY/ this.scale,
+        color:this.selectedColor
       }
     }
     else if (selectedTool === "eraser") {
