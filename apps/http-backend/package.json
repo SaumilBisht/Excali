@@ -6,7 +6,7 @@
   "scripts": {
     "build": "node build.cjs",
     "start": "node ./dist/index.cjs",
-    "dev": "npm run build && npm run start"
+    "dev": "pnpm build && pnpm start"
   },
   "keywords": [],
   "author": "",
