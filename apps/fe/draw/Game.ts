@@ -43,6 +43,13 @@ type Shape={
 } | {
   type: "eraser",
   points: { x: number; y: number }[]
+} | {
+  type:"text",
+  font:string,
+  text:string,
+  startX:number,
+  startY:number,
+  color:string
 }
 
 export class Game{
@@ -175,6 +182,11 @@ export class Game{
           this.ctx.stroke()
           this.ctx.closePath();
         }
+        else if (shape.type === "text") {
+          this.ctx.fillStyle = shape.color;
+          this.ctx.font = shape.font;
+          this.ctx.fillText(shape.text, shape.startX, shape.startY);
+        }
       }
     })
     this.ctx.restore();
@@ -214,6 +226,13 @@ export class Game{
   //All mousclick and mouseMove handler Arrow functions
 
   mouseDownHandler = (e: { clientX: number; clientY: number; }) => {
+
+    if (this.selectedTool === "text") {
+      const x = e.clientX / this.scale;
+      const y = e.clientY / this.scale;
+      this.createTextInput(x, y);
+      return;
+    }
 
     if (this.keysPressed.has(" ")) {
       this.isPanning = true;
@@ -450,4 +469,82 @@ export class Game{
   keyUpHandler = (e: KeyboardEvent) => {
     this.keysPressed.delete(e.key);
   };
+
+  createTextInput=(x: number, y: number)=> {
+    const input = document.createElement("input");
+    input.type = "text";
+    input.style.color = this.selectedColor;
+    input.placeholder = "type";
+    input.style.position = "absolute";
+    input.style.left = `${x * this.scale + this.canvas.offsetLeft}px`;
+    input.style.top = `${y * this.scale + this.canvas.offsetTop}px`;
+    input.style.font = "16px sans-serif";
+    input.style.padding = "4px";
+    input.style.zIndex = "10";
+    input.style.background = "black";
+    input.style.border = "1px solid #ffffff";
+    document.body.appendChild(input);
+    
+  
+    // Defer focus so blur doesn't immediately fire
+    setTimeout(() => {
+      input.focus();
+    }, 0);
+  
+    let hasRemoved = false;
+  
+    const removeInput = () => {
+      if (hasRemoved) return;
+      hasRemoved = true;
+  
+      const text = input.value;
+      if (document.body.contains(input)) {
+        document.body.removeChild(input);
+      }
+  
+      if (!text) return;//nothing typed
+  
+      const rectX = x+4 - this.offsetX / this.scale;
+      const rectY = y+19 - this.offsetY / this.scale;
+  
+      this.ctx.save();
+      this.ctx.translate(this.offsetX, this.offsetY);
+      this.ctx.scale(this.scale, this.scale);
+  
+      this.ctx.fillStyle = this.selectedColor;
+      this.ctx.font = `16px sans-serif`;
+      this.ctx.fillText(text, rectX, rectY);
+  
+      this.ctx.restore();
+  
+      const shape = {
+        type: "text",
+        font: `16px sans-serif`,
+        text,
+        startX: rectX,
+        startY: rectY,
+        color: this.selectedColor
+      } as Shape;
+  
+      this.existingShapes.push(shape);
+      this.clearCanvas();
+  
+      this.socket.send(JSON.stringify({
+        type: "chat",
+        message: JSON.stringify({ shape }),
+        roomId: this.roomId
+      }));
+    };
+  
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        removeInput();
+      }
+    });
+  
+    input.addEventListener("blur", () => {
+      removeInput();
+    });
+  }
+  
 }

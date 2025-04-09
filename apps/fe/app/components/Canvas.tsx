@@ -1,11 +1,11 @@
 "use client"
 import { useEffect, useRef, useState } from "react";
 import { IconButton } from "./IconButton";
-import { ArrowUpLeft, Circle, CircleEllipsis, Eraser, LucideEllipsis, Palette, Pencil, RectangleHorizontal, Slash, Triangle } from "lucide-react";
+import { ArrowUpLeft, Circle, CircleEllipsis, Eraser, LucideEllipsis, Palette, Pencil, RectangleHorizontal, Slash, TextCursorInputIcon, Triangle } from "lucide-react";
 import { Game } from "../../draw/Game";
 import { HexColorPicker } from "react-colorful";
 
-export type Tool="circle" | "rect" | "pencil" | "line"| "tri" | "oval" | "eraser" | "select";
+export type Tool="circle" | "rect" | "pencil" | "line"| "tri" | "oval" | "eraser" | "select" | "text";
 
 export function Canvas({roomId,socket}: {
   roomId:string,
@@ -100,6 +100,12 @@ function ToolBar({selectedTool,setSelectedTool,selectedColor,setSelectedColor}:{
           }}
           activated={selectedTool==="select"}
           text={"Selection"}/>
+        <IconButton icon={<Text/>}
+          onClick={()=>{
+            setSelectedTool("text")
+          }}
+          activated={selectedTool==="text"}
+          text={"Text"}/>
         <div className="relative">
           <IconButton
             icon={<Palette />}
@@ -120,4 +126,7 @@ function ToolBar({selectedTool,setSelectedTool,selectedColor,setSelectedColor}:{
     </div>
   )
   
+}
+function Text(){
+  return <div className="font-bold px-1">T</div>
 }
