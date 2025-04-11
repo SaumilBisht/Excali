@@ -36,6 +36,7 @@ model NewRoom{
 model NewChat{
   id Int @id @default(autoincrement())
   message String
+  shapeId  String @unique
   roomId Int
   userId String
 

@@ -85,14 +85,16 @@ wss.on("connection",(ws,request)=>{
       {
         const roomId=Number(parsedData.roomId);
         const message=parsedData.message;
+        const shapeId=parsedData.shapeId;
         
-  
+        console.log(message)
         await prisma.newChat.create({
           data: {
-            roomId:roomId,
+            shapeId, // from frontend
             message,
-            userId:userId
-          }
+            roomId,
+            userId,
+          },
         });
   
   
@@ -107,6 +109,28 @@ wss.on("connection",(ws,request)=>{
           }
         })
       }
+      else if(parsedData.type==="update")
+      {
+        const { shapeId, message,roomId } = parsedData;
+        await prisma.newChat.update({
+          where: { shapeId },
+          data: {
+            message
+          }
+        });     
+        users.forEach(user=>{
+          if(user.rooms.includes(roomId))
+          {//unhi ke ws connection pe send
+            user.ws.send(JSON.stringify({
+              type:"update",
+              roomId,
+              shapeId,
+              message
+            }))
+          }
+        })   
+      }
+      
     })
 
   }
