@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useRef, useState } from "react";
 import { IconButton } from "./IconButton";
-import { ArrowUpLeft, Circle, CircleEllipsis, Eraser, LucideEllipsis, Palette, Pencil, RectangleHorizontal, Slash, TextCursorInputIcon, Triangle } from "lucide-react";
+import { ArrowUpLeft, Circle, CircleEllipsis, Eraser, LucideEllipsis, Palette, Pencil, RectangleHorizontal, Slash, TextCursorInputIcon, Triangle ,Undo, Redo } from "lucide-react";
 import { Game } from "../../draw/Game";
 import { HexColorPicker } from "react-colorful";
 
@@ -40,16 +40,20 @@ export function Canvas({roomId,socket}: {
     return(
       <div className="h-screen overflow-hidden bg-black">
         <canvas ref={canvasRef} width={window.innerWidth} height={window.innerHeight} className="border border-black text-black"></canvas>
-        <ToolBar selectedTool={selectedTool} setSelectedTool={setSelectedTool} selectedColor={selectedColor} setSelectedColor={setSelectedColor}/>
+        <ToolBar selectedTool={selectedTool} setSelectedTool={setSelectedTool} selectedColor={selectedColor} setSelectedColor={setSelectedColor}
+        onUndo={() => game?.undo()}
+        onRedo={() => game?.redo()}/>
       </div>
     )
 }
 
-function ToolBar({selectedTool,setSelectedTool,selectedColor,setSelectedColor}:{
+function ToolBar({selectedTool,setSelectedTool,selectedColor,setSelectedColor,onUndo,onRedo}:{
   selectedTool:Tool,
   setSelectedTool:(s:Tool)=>void ,
   selectedColor:string,
   setSelectedColor:(color: string)=>void
+  onUndo: () => void,
+  onRedo: () => void
 }){
   const [showColorPicker, setShowColorPicker] = useState(false);
   return(
@@ -120,8 +124,18 @@ function ToolBar({selectedTool,setSelectedTool,selectedColor,setSelectedColor}:{
             </div>
           )}
         </div>
-
-
+        <IconButton 
+          icon={<Undo />} 
+          onClick={onUndo} 
+          activated={false} 
+          text="Undo"
+        />
+        <IconButton 
+          icon={<Redo />} 
+          onClick={onRedo} 
+          activated={false} 
+          text="Redo"
+        />
       </div>
     </div>
   )

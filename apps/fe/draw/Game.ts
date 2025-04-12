@@ -65,6 +65,8 @@ export class Game{
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private existingShapes: Shape[]
+  undoStack: Shape[] = [];
+  redoStack: Shape[] = [];
   private roomId: string;
   private clicked: boolean;
   private startX = 0;
@@ -116,6 +118,37 @@ export class Game{
     this.init();
     this.initHandlers();//getting new chats from websocket
     this.initMouseHandlers();//making real time shapes
+  }
+  undo() {
+    if (this.undoStack.length === 0) return;
+    const shape = this.undoStack.pop()!;
+    this.redoStack.push(shape);
+    this.existingShapes = this.existingShapes.filter(s => s.id !== shape.id);
+    this.sendDeleteShapeWS(shape);
+    this.redraw();
+  }
+
+  redo() {
+    if (this.redoStack.length === 0) return;
+    const shape = this.redoStack.pop()!;
+    this.undoStack.push(shape);
+    this.existingShapes.push(shape);
+    this.sendShapeViaWS(shape);
+    this.redraw();
+  }
+  sendShapeViaWS(shape: Shape) {
+    this.socket.send(JSON.stringify({
+      type: 'chat',
+      roomId: this.roomId,
+      shapeId:shape.id,
+      message: JSON.stringify({shape}),
+    }));
+  }
+  sendDeleteShapeWS(shape: Shape) {
+    this.socket.send(JSON.stringify({
+      type: 'delete',
+      shapeId: shape.id,
+    }));
   }
 
   async init()
@@ -651,6 +684,8 @@ export class Game{
     }
 
     this.existingShapes.push(shape);
+    this.undoStack.push(shape);
+    this.redoStack = []; 
 
     this.socket.send(JSON.stringify({
         type: "chat",
@@ -759,6 +794,8 @@ export class Game{
       } as Shape;
   
       this.existingShapes.push(shape);
+      this.undoStack.push(shape);
+      this.redoStack = []; 
       this.redraw();
   
       this.socket.send(JSON.stringify({

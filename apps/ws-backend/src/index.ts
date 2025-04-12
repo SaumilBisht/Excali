@@ -130,6 +130,22 @@ wss.on("connection",(ws,request)=>{
           }
         })   
       }
+      else if(parsedData.type==="delete")
+      {
+        const {shapeId,roomId}=parsedData;
+        await prisma.newChat.delete({
+          where:{shapeId}
+        })
+        users.forEach(user=>{
+          if(user.rooms.includes(roomId))
+          {//unhi ke ws connection pe send
+            user.ws.send(JSON.stringify({
+              type:"delete",
+              shapeId
+            }))
+          }
+        })
+      }
       
     })
 
