@@ -113,17 +113,14 @@ export default function JoinRoom() {
         </div>
       </header>
 
-      <main className="flex-1 flex items-center justify-around p-4">
+      <main className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-8 p-4">
         <div className="w-full max-w-md glass rounded-xl p-8 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-quicksketch-light/10 to-quicksketch-secondary/10 z-0"></div>
           <div className="relative z-10">
             <h1 className="text-3xl font-bold mb-6 text-center">Create a Room</h1>
-            
-            
+
             <div className="space-y-2">
-              <div className="block text-sm text-gray-300">
-                Room Name
-              </div>
+              <div className="block text-sm text-gray-300">Room Name</div>
               <input
                 type="text"
                 onChange={(e) => setcreateRoomName(e.target.value)}

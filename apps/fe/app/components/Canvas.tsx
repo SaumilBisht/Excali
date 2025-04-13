@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { IconButton } from "./IconButton";
 import { ArrowUpLeft, Circle, CircleEllipsis, Eraser, LucideEllipsis, Palette, Pencil, RectangleHorizontal, Slash, TextCursorInputIcon, Triangle ,Undo, Redo } from "lucide-react";
 import { Game } from "../../draw/Game";
@@ -16,6 +16,22 @@ export function Canvas({roomId,socket}: {
   const [selectedTool,setSelectedTool]=useState<Tool>("circle");
   const [selectedColor,setSelectedColor]=useState<string>("white")
 
+
+  const resizeCanvas = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      game?.redraw(); // Redraw shapes
+    }
+  }, [game]);
+  
+
+  useEffect(() => {
+    resizeCanvas(); // initial resize
+    window.addEventListener("resize", resizeCanvas);
+    return () => window.removeEventListener("resize", resizeCanvas);
+  }, [resizeCanvas]);  
 
     useEffect(() => {
         game?.setTool(selectedTool);//object.function of class, udhr bhi tool change drawing
@@ -38,11 +54,9 @@ export function Canvas({roomId,socket}: {
     },[canvasRef])
   
     return(
-      <div className="h-screen overflow-hidden bg-black">
-        <canvas ref={canvasRef} width={window.innerWidth} height={window.innerHeight} className="border border-black text-black"></canvas>
-        <ToolBar selectedTool={selectedTool} setSelectedTool={setSelectedTool} selectedColor={selectedColor} setSelectedColor={setSelectedColor}
-        onUndo={() => game?.undo()}
-        onRedo={() => game?.redo()}/>
+      <div className="h-screen w-screen overflow-hidden bg-black touch-none relative">
+        <canvas ref={canvasRef}  className="border border-black text-black"></canvas>
+        <ToolBar selectedTool={selectedTool} setSelectedTool={setSelectedTool} selectedColor={selectedColor} setSelectedColor={setSelectedColor} onUndo={() => game?.undo()} onRedo={() => game?.redo()}/>
       </div>
     )
 }
@@ -57,8 +71,9 @@ function ToolBar({selectedTool,setSelectedTool,selectedColor,setSelectedColor,on
 }){
   const [showColorPicker, setShowColorPicker] = useState(false);
   return(
-    <div className="fixed top-4 left-8">
-      <div className="flex">
+    <div className="fixed top-4 left-4 right-4 z-50">
+      <div className="flex flex-wrap gap-2 bg-white/10 p-2 rounded-lg backdrop-blur-sm">
+
         <IconButton icon={<Pencil/>} 
           onClick={()=>{
             setSelectedTool("pencil")

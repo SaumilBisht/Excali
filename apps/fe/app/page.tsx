@@ -50,26 +50,26 @@ export default function Home() {
         </nav>
       </header>
 
-      <section className="container mx-auto pt-16 pb-24 px-4 flex flex-col md:flex-row items-center gap-12">
-        <div className="flex-1 space-y-8">
-          <h1 className="text-5xl font-bold leading-tight">
+      <section className="container mx-auto pt-16 pb-24 px-4 flex flex-col-reverse lg:flex-row items-center gap-12">
+        <div className="flex-1 space-y-8 text-center lg:text-left">
+          <h1 className="text-4xl sm:text-5xl font-bold leading-tight">
             Collaborate and Create with <span className="text-gradient">QuickSketch</span>
           </h1>
-          <p className="text-lg text-gray-300 max-w-lg">
+          <p className="text-base sm:text-lg text-gray-300 max-w-lg mx-auto lg:mx-0">
             Draw, design, and collaborate in real-time with others. 
             QuickSketch makes creative collaboration simple and effective.
           </p>
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap justify-center lg:justify-start gap-4">
             <button 
               onClick={() => router.push('/canvas')}
-              className="px-6 py-3 button-gradient rounded-md text-white text-lg font-medium"
+              className="px-6 py-3 button-gradient rounded-md text-white text-base sm:text-lg font-medium"
             >
               Join Room
             </button>
             {!isAuthenticated && (
               <button 
                 onClick={() => router.push('/signup')}
-                className="px-6 py-3 glass rounded-md hover:bg-white/10 transition-colors text-lg font-medium"
+                className="px-6 py-3 glass rounded-md hover:bg-white/10 transition-colors text-base sm:text-lg font-medium"
               >
                 Create Account
               </button>
@@ -77,12 +77,14 @@ export default function Home() {
           </div>
         </div>
         <div className="flex-1 flex justify-center">
-          <div className="relative w-full max-w-lg aspect-square neo-blur rounded-2xl p-1">
+          <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg aspect-square neo-blur rounded-2xl p-1">
             <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-quicksketch-light/20 to-quicksketch-secondary/20 animate-pulse-subtle"></div>
             <div className="relative h-full w-full rounded-xl overflow-hidden bg-gradient-to-br from-[#161A24] to-[#1A1F2C]">
               <div className="absolute top-4 left-4 right-4 h-6 glass rounded-md"></div>
-              <div className="absolute top-16 left-4 right-4 bottom-4 glass rounded-md flex items-center justify-center">
-                <span className="text-gradient text-lg">Collaborative Drawing Canvas</span>
+              <div className="absolute top-16 left-4 right-4 bottom-4 glass rounded-md flex items-center justify-center px-4 text-center">
+                <span className="text-gradient text-sm sm:text-base md:text-lg">
+                  Collaborative Drawing Canvas
+                </span>
               </div>
             </div>
           </div>
@@ -94,7 +96,7 @@ export default function Home() {
           <h2 className="text-3xl font-bold text-center mb-16">
             <span className="text-gradient">Features</span>
           </h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
                 title: "Real-time Collaboration",
