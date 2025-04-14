@@ -4,6 +4,7 @@ import { IconButton } from "./IconButton";
 import { ArrowUpLeft, Circle, CircleEllipsis, Eraser, LucideEllipsis, Palette, Pencil, RectangleHorizontal, Slash, TextCursorInputIcon, Triangle ,Undo, Redo } from "lucide-react";
 import { Game } from "../../draw/Game";
 import { HexColorPicker } from "react-colorful";
+import { useRouter } from "next/navigation";
 
 export type Tool="circle" | "rect" | "pencil" | "line"| "tri" | "oval" | "eraser" | "select" | "text";
 
@@ -56,20 +57,23 @@ export function Canvas({roomId,socket}: {
     return(
       <div className="h-screen w-screen overflow-hidden bg-black touch-none relative">
         <canvas ref={canvasRef}  className="border border-black text-black"></canvas>
-        <ToolBar selectedTool={selectedTool} setSelectedTool={setSelectedTool} selectedColor={selectedColor} setSelectedColor={setSelectedColor} onUndo={() => game?.undo()} onRedo={() => game?.redo()}/>
+        <ToolBar selectedTool={selectedTool} setSelectedTool={setSelectedTool} selectedColor={selectedColor} setSelectedColor={setSelectedColor} onUndo={() => game?.undo()} onRedo={() => game?.redo()} socket={socket} roomId={roomId}/>
       </div>
     )
 }
 
-function ToolBar({selectedTool,setSelectedTool,selectedColor,setSelectedColor,onUndo,onRedo}:{
+function ToolBar({selectedTool,setSelectedTool,selectedColor,setSelectedColor,onUndo,onRedo,socket,roomId}:{
   selectedTool:Tool,
   setSelectedTool:(s:Tool)=>void ,
   selectedColor:string,
   setSelectedColor:(color: string)=>void
   onUndo: () => void,
-  onRedo: () => void
+  onRedo: () => void,
+  socket:WebSocket,
+  roomId:string
 }){
   const [showColorPicker, setShowColorPicker] = useState(false);
+  const router=useRouter();
   return(
     <div className="fixed top-4 left-4 right-4 z-50">
       <div className="flex flex-wrap gap-2 bg-white/10 p-2 rounded-lg backdrop-blur-sm">
@@ -151,6 +155,20 @@ function ToolBar({selectedTool,setSelectedTool,selectedColor,setSelectedColor,on
           activated={false} 
           text="Redo"
         />
+        <div className="ml-auto mt-2">
+          <button
+            className="text-white bg-red-500 py-2 px-4 rounded-full shadow-md hover:bg-red-600 transition-all"
+            onClick={() => {
+              socket.send(JSON.stringify({
+                type:"leave_room",
+                roomId:roomId
+              }))
+              router.push("/canvas")
+            }}
+          >
+            Leave Room
+          </button>
+        </div>
       </div>
     </div>
   )
