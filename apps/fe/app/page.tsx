@@ -80,11 +80,9 @@ export default function Home() {
           <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg aspect-square neo-blur rounded-2xl p-1">
             <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-quicksketch-light/20 to-quicksketch-secondary/20 animate-pulse-subtle"></div>
             <div className="relative h-full w-full rounded-xl overflow-hidden bg-gradient-to-br from-[#161A24] to-[#1A1F2C]">
-              <div className="absolute top-4 left-4 right-4 h-6 glass rounded-md"></div>
-              <div className="absolute top-16 left-4 right-4 bottom-4 glass rounded-md flex items-center justify-center px-4 text-center">
-                <span className="text-gradient text-sm sm:text-base md:text-lg">
-                  Collaborative Drawing Canvas
-                </span>
+              <div className="absolute top-4 left-4 right-4 h-6 rounded-md text-gradient text-sm sm:text-base md:text-lg flex items-center justify-center">Collaborative Drawing Canvas</div>
+              <div className="absolute top-16  bottom-4  rounded-md  px-4 text-center">
+                <img src="/BACKGROUND.png" alt="Canvas Preview" className="w-full h-full rounded-md"/>
               </div>
             </div>
           </div>

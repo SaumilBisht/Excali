@@ -110,7 +110,7 @@ export function AuthPage({ isSignUp }: AuthPageProps) {
                 <input
                   type="text"
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="John Doe" onChange={(e)=>{setName(e.target.value)}}
+                  placeholder="Raj" onChange={(e)=>{setName(e.target.value)}}
                 />
                 
               </div>
@@ -122,7 +122,7 @@ export function AuthPage({ isSignUp }: AuthPageProps) {
                 <input
                   type="email"
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="you@example.com" onChange={(e)=>{setEmail(e.target.value)}}
+                  placeholder="raj@gmail.com" onChange={(e)=>{setEmail(e.target.value)}}
                 />
               </div>
   
@@ -198,7 +198,7 @@ export function AuthPage({ isSignUp }: AuthPageProps) {
                 <input
                   type="email"
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="you@example.com" onChange={(e)=>{setEmail(e.target.value)}}
+                  placeholder="raj@gmail.com" onChange={(e)=>{setEmail(e.target.value)}}
                 />
               
                 <div className="block text-sm font-medium text-gray-700">
