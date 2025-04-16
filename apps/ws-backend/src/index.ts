@@ -8,7 +8,8 @@ const wss=new WebSocketServer({port:8080})
 interface User {
   ws: WebSocket,
   rooms: number[],
-  userId: string
+  userId: string,
+  clientId?:string
 }
 const users: User[] = [];//users array of objects
 
@@ -70,7 +71,10 @@ wss.on("connection",(ws,request)=>{
       if(parsedData.type==="join_room")
       {
         const user=users.find((x)=>x.ws===ws);
-        user?.rooms.push(Number(parsedData.roomId))
+        if (user) {
+          user.rooms.push(Number(parsedData.roomId));
+          user.clientId = parsedData.clientId; // store the sender’s clientId
+        }
       }
       else if(parsedData.type==="leave_room")
       {
@@ -104,7 +108,8 @@ wss.on("connection",(ws,request)=>{
               type:"chat",
               roomId,
               message,
-              shapeId
+              shapeId,
+              senderId: parsedData.senderId 
             }))
           }
         })
@@ -113,8 +118,6 @@ wss.on("connection",(ws,request)=>{
       {
         const { shapeId, message} = parsedData;
         const roomId=Number(parsedData.roomId)
-        console.log(message)
-        console.log(shapeId)
         await prisma.newChat.update({
           where: { shapeId },
           data: {

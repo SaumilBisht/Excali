@@ -1,4 +1,5 @@
 "use client"
+import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "react";
 import { Canvas } from "./Canvas";
 import { WS_URL } from "../canvas/config";
@@ -9,6 +10,7 @@ export function RoomCanvas({roomId}: {
 
   const [socket,setSocket]=useState<WebSocket >()
   const [token, setToken] = useState<string | null>(null);
+  const [clientId] = useState(() => uuidv4()); // Generate once per tab
   
     useEffect(()=>{
 
@@ -28,7 +30,8 @@ export function RoomCanvas({roomId}: {
 
         ws.send(JSON.stringify({
           type:"join_room",
-          roomId
+          roomId,
+          clientId
         }))
       }
     },[])
@@ -40,7 +43,7 @@ export function RoomCanvas({roomId}: {
 
   return(
     <div>
-      <Canvas roomId={roomId} socket={socket}/>
+      <Canvas roomId={roomId} socket={socket} clientId={clientId}/>
     </div>
   )
 }

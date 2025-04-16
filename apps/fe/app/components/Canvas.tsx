@@ -8,9 +8,10 @@ import { useRouter } from "next/navigation";
 
 export type Tool="circle" | "rect" | "pencil" | "line"| "tri" | "oval" | "eraser" | "select" | "text";
 
-export function Canvas({roomId,socket}: {
+export function Canvas({roomId,socket,clientId}: {
   roomId:string,
-  socket:WebSocket
+  socket:WebSocket,
+  clientId:string
 }){
   const canvasRef=useRef<HTMLCanvasElement>(null);
   const [game,setGame]=useState<Game>();//stores CLASS OBJECT
@@ -44,7 +45,7 @@ export function Canvas({roomId,socket}: {
   
       if(canvasRef.current)
       {
-        const g = new Game(canvasRef.current, roomId, socket);
+        const g = new Game(canvasRef.current, roomId, socket,clientId);
         setGame(g);
 
         return () => {

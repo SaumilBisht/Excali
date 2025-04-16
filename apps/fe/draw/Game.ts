@@ -103,13 +103,15 @@ export class Game{
   
   // Callback for when a shape is selected
   private onShapeSelected: ((shapeInfo: { type: Tool; id: string } | null) => void) | null = null;
+  private clientId;
 
-  constructor(canvas:HTMLCanvasElement,roomId:string,socket:WebSocket)
+  constructor(canvas:HTMLCanvasElement,roomId:string,socket:WebSocket,clientId:string)
   {
     this.roomId=roomId;
     this.socket=socket;
     this.canvas=canvas;
     this.clicked=false;
+    this.clientId = clientId;
     this.existingShapes=[];//for now as constructor cant be async;
     this.ctx=canvas.getContext("2d")!;
 
@@ -376,6 +378,7 @@ export class Game{
   
       if(message.type==="chat")
       {
+        if (message.senderId===this.clientId) return;//ignore khudka chat message
         const parsedShape=JSON.parse(message.message);
         this.existingShapes.push(parsedShape.shape);  
         this.redraw()
@@ -720,7 +723,8 @@ export class Game{
             shape
         }),
         roomId: this.roomId,
-        shapeId:shape.id
+        shapeId:shape.id,
+        senderId: this.clientId,
     }))
   }
 
@@ -829,7 +833,8 @@ export class Game{
         type: "chat",
         message: JSON.stringify({ shape }),
         roomId: this.roomId,
-        shapeId:shape.id
+        shapeId:shape.id,
+        senderId: this.clientId
       }));
     };
   
