@@ -22,8 +22,8 @@ export function IconButton({ icon, onClick, activated, text }: {
         }
         setShowTooltip(false);
       }}
-      className={`relative flex items-center justify-center rounded-full border p-2 m-2 cursor-pointer 
-        hover:text-gray-400 ${activated ? "text-red-600" : "text-white"}`}
+      className={`relative flex items-center justify-center rounded-xl border p-2 m-2 cursor-pointer 
+        hover:text-gray-400 ${activated ? "bg-gradient-to-br from-orange-500 to-pink-500 text-white" : "bg-[#2d2d2d] text-orange-100 hover:bg-orange-700"}`}
     >
       {icon}
 

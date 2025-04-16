@@ -157,7 +157,7 @@ function ToolBar({selectedTool,setSelectedTool,selectedColor,setSelectedColor,on
         />
         <div className="ml-auto mt-2">
           <button
-            className="text-white bg-red-500 py-2 px-4 rounded-full shadow-md hover:bg-red-600 transition-all"
+            className="text-white bg-red-600 py-2 px-4 rounded-full shadow-md hover:bg-red-400 transition-all"
             onClick={() => {
               socket.send(JSON.stringify({
                 type:"leave_room",
