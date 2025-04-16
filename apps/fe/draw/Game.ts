@@ -380,18 +380,24 @@ export class Game{
         this.existingShapes.push(parsedShape.shape);  
         this.redraw()
       }
-      if(message.type==="update")
-      {
-        const shapeId=message.shapeId
-        const parsedShape=message.message;
-
-        this.existingShapes=this.existingShapes.map((shape)=>{
-          if(shapeId===shape.id)
-          {
-            return parsedShape.shape;
-          }
-          return shape;
-        })
+      if (message.type === "update") {
+        const shapeId = message.shapeId;
+        //@ts-ignore
+        let parsedData;
+        try {
+          parsedData = JSON.parse(message.message);
+          
+          this.existingShapes = this.existingShapes.map((shape) => {
+            if (shapeId === shape.id) {
+              // Return the correctly parsed shape with color preserved
+              //@ts-ignore
+              return parsedData.shape;
+            }
+            return shape;
+          });
+        } catch (e) {
+          console.error("Error parsing update message:", e);
+        }
         this.redraw();
       }
       if(message.type==="delete")

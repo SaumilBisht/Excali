@@ -124,7 +124,6 @@ wss.on("connection",(ws,request)=>{
         users.forEach(user=>{
           if(user.rooms.includes(roomId))
           {//unhi ke ws connection pe send
-            console.log("Sending update to", user.userId);
             user.ws.send(JSON.stringify({
               type:"update",
               roomId,
