@@ -136,7 +136,6 @@ app.get("/chats/:roomId",async(req,res)=>{//chats ke aage /1 mein 1 is roomId
       },
       take:10000
     })
-    console.log(messages);
     res.json({
       messages
     })

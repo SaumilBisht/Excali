@@ -148,6 +148,7 @@ export class Game{
     this.socket.send(JSON.stringify({
       type: 'delete',
       shapeId: shape.id,
+      roomId:this.roomId
     }));
   }
 
@@ -378,6 +379,26 @@ export class Game{
         const parsedShape=JSON.parse(message.message);
         this.existingShapes.push(parsedShape.shape);  
         this.redraw()
+      }
+      if(message.type==="update")
+      {
+        const shapeId=message.shapeId
+        const parsedShape=message.message;
+
+        this.existingShapes=this.existingShapes.map((shape)=>{
+          if(shapeId===shape.id)
+          {
+            return parsedShape.shape;
+          }
+          return shape;
+        })
+        this.redraw();
+      }
+      if(message.type==="delete")
+      {
+        const shapeId=message.shapeId
+        this.existingShapes=this.existingShapes.filter((curr)=>curr.id!==shapeId)
+        this.redraw();
       }
     })
   }

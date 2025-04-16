@@ -87,7 +87,6 @@ wss.on("connection",(ws,request)=>{
         const message=parsedData.message;
         const shapeId=parsedData.shapeId;
         
-        console.log(message)
         await prisma.newChat.create({
           data: {
             shapeId, // from frontend
@@ -104,14 +103,18 @@ wss.on("connection",(ws,request)=>{
             user.ws.send(JSON.stringify({
               type:"chat",
               roomId,
-              message
+              message,
+              shapeId
             }))
           }
         })
       }
       else if(parsedData.type==="update")
       {
-        const { shapeId, message,roomId } = parsedData;
+        const { shapeId, message} = parsedData;
+        const roomId=Number(parsedData.roomId)
+        console.log(message)
+        console.log(shapeId)
         await prisma.newChat.update({
           where: { shapeId },
           data: {
@@ -121,6 +124,7 @@ wss.on("connection",(ws,request)=>{
         users.forEach(user=>{
           if(user.rooms.includes(roomId))
           {//unhi ke ws connection pe send
+            console.log("Sending update to", user.userId);
             user.ws.send(JSON.stringify({
               type:"update",
               roomId,
@@ -132,7 +136,9 @@ wss.on("connection",(ws,request)=>{
       }
       else if(parsedData.type==="delete")
       {
-        const {shapeId,roomId}=parsedData;
+        const {shapeId}=parsedData;
+        const roomId=Number(parsedData.roomId)
+        console.log(shapeId)
         await prisma.newChat.delete({
           where:{shapeId}
         })
@@ -141,7 +147,8 @@ wss.on("connection",(ws,request)=>{
           {//unhi ke ws connection pe send
             user.ws.send(JSON.stringify({
               type:"delete",
-              shapeId
+              shapeId,
+              roomId
             }))
           }
         })
