@@ -5,7 +5,9 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
+    "postinstall": "cd packages/db && npx prisma generate",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
+
   },
   "devDependencies": {
     "autoprefixer": "^10.4.21",
