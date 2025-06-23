@@ -27,7 +27,7 @@ export function AuthPage({ isSignUp }: AuthPageProps) {
 
     try {
       const endpoint = isSignUp ? "/signup" : "/signin";
-      const response = await axios.post(`http://localhost:3001${endpoint}`,
+      const response = await axios.post(`https://api.saumilbisht.in${endpoint}`,
         {
           name: name,
           email: email,
@@ -59,7 +59,7 @@ export function AuthPage({ isSignUp }: AuthPageProps) {
 
     try {
       const endpoint = isSignUp ? "/signup" : "/signin";
-      const response = await axios.post(`http://localhost:3001${endpoint}`,
+      const response = await axios.post(`https://api.saumilbisht.in${endpoint}`,
         {
           email: email,
           password: pass
