@@ -1,0 +1,33 @@
+FROM node:22-alpine
+
+# Install pnpm globally
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+WORKDIR /usr/src/app
+
+RUN apk add --no-cache openssl
+
+ARG DATABASE_URL
+
+COPY ./pnpm-lock.yaml ./pnpm-lock.yaml
+COPY ./pnpm-workspace.yaml ./pnpm-workspace.yaml
+COPY ./package.json ./package.json
+COPY ./turbo.json ./turbo.json
+
+COPY ./packages ./packages
+
+COPY ./apps/fe ./apps/fe
+
+COPY . .
+# Copy everything early otherwise overwrites node_modules and previously copied files, and may mess up workspace structure and installed deps.
+
+RUN pnpm install --verbose
+
+RUN npm install -g turbo
+
+RUN pnpm run db:generate
+RUN DATABASE_URL=${DATABASE_URL} npx turbo build --filter=fe...
+
+EXPOSE 3000
+
+CMD ["pnpm","run","start:fe"]
