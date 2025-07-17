@@ -42,7 +42,7 @@ STEP 4: RUN EACH CONTAINER
 2. MIGRATE DB 
   -> docker ps
 
-  -> docker exec -it fe-qs sh
+  -> docker exec -it excali-fe-qs sh   (name of image)
   -> cd packages/db
   -> npx prisma migrate dev --name init 
   -> exit
