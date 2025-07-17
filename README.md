@@ -32,3 +32,20 @@ STEP 4: RUN EACH CONTAINER
 
   3. ws:
     - docker run -d --name ws-qs --network quickNetwork -e DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres -p 8080:8080 excali-ws
+
+## DOCKER COMPOSE STEPS
+0. CLONE REPO git clone https://github.com/SaumilBisht/Excali cd Excali
+
+1. Build and start all services:
+    ->docker compose up -d --build
+
+2. MIGRATE DB 
+  -> docker ps
+
+  -> docker exec -it fe-qs sh
+  -> cd packages/db
+  -> npx prisma migrate dev --name init 
+  -> exit
+
+IF, Stop the app: docker compose down docker compose down --volumes --remove-orphans
+
