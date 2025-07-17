@@ -8,7 +8,9 @@
     "postinstall": "cd packages/db && npx prisma generate",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "db:generate": "cd packages/db && npx prisma generate && cd ../../",
-    "start:fe": "cd apps/fe && pnpm run start"
+    "start:fe": "cd apps/fe && pnpm run start",
+    "start:be": "cd apps/http-backend && pnpm run start",
+    "start:ws": "cd apps/ws-backend && pnpm run start"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.21",
