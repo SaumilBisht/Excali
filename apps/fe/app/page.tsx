@@ -6,6 +6,7 @@ import { SparklesLogo } from "@/components/ui/sparkles-logo";
 import { WavyBackground } from "@/components/ui/wavy-background";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { AuroraBackground } from "@/components/ui/aurora-background";
+import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { motion } from "motion/react";
 
 export default function Home() {
@@ -170,6 +171,49 @@ export default function Home() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-12 bg-zinc-950/40">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-8">
+            <div className="inline-block px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-xs text-gray-400 mb-3">
+              Testimonials
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-3">
+              What our{" "}
+              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                users say
+              </span>
+            </h2>
+          </div>
+          <AnimatedTestimonials testimonials={[
+            {
+              quote: "QuickSketch has transformed how our design team collaborates. The real-time drawing feature is incredibly smooth and intuitive.",
+              name: "Alex Chen",
+              designation: "Design Lead at CreativeFlow",
+              src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=3560&auto=format&fit=crop",
+            },
+            {
+              quote: "Finally, a collaborative canvas that actually works! Our remote team can brainstorm together as if we're in the same room.",
+              name: "Maria Rodriguez",
+              designation: "Product Manager at TechVision",
+              src: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=3540&auto=format&fit=crop",
+            },
+            {
+              quote: "The simplicity and power of QuickSketch is unmatched. We use it for everything from wireframes to team workshops.",
+              name: "David Kim",
+              designation: "UX Designer at PixelPerfect",
+              src: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=3540&auto=format&fit=crop",
+            },
+            {
+              quote: "Best collaborative drawing tool we've used. The auto-save feature has saved us countless times during client presentations.",
+              name: "Sarah Johnson",
+              designation: "Creative Director at Innovate",
+              src: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=3464&auto=format&fit=crop",
+            },
+          ]} autoplay={false} />
         </div>
       </section>
 
