@@ -83,7 +83,7 @@ export default function Home() {
       </section>
 
       {/* Scroll Animation Section */}
-      <section className="hidden md:block">
+      <section className="hidden md:block bg-gradient-to-b from-black via-zinc-950 to-zinc-900/40">
         <ContainerScroll
           titleComponent={
             <>
@@ -108,24 +108,24 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="py-24 relative z-10 border-t border-white/5">
+      <section className="py-12 relative z-10 bg-zinc-900/40">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <div className="inline-block px-4 py-2 rounded-full border border-white/10 bg-white/5 text-sm text-gray-400 mb-4">
+          <div className="text-center mb-10">
+            <div className="inline-block px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-xs text-gray-400 mb-3">
               Features
             </div>
-            <h2 className="text-4xl sm:text-5xl font-bold mb-4">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-3">
               Everything you need for{" "}
               <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
                 creative collaboration
               </span>
             </h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-400 text-base max-w-2xl mx-auto">
               Powerful tools designed to make your collaborative drawing experience seamless and enjoyable
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
             {[
               {
                 icon: "🎨",
@@ -160,14 +160,11 @@ export default function Home() {
             ].map((feature, index) => (
               <div 
                 key={index} 
-                className="group relative rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-8 hover:bg-white/10 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/10"
+                className="group relative rounded-lg border border-white/10 bg-white/5 backdrop-blur-sm p-5 hover:bg-white/10 transition-all duration-200"
               >
-                <div className="text-5xl mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
-                <p className="text-gray-400 leading-relaxed">{feature.description}</p>
-                
-                {/* Hover gradient */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                <div className="text-3xl mb-3">{feature.icon}</div>
+                <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -175,28 +172,28 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="container mx-auto py-32 px-4 text-center relative z-10">
-        <div className="max-w-4xl mx-auto relative">
+      <section className="py-12 px-4 text-center relative z-10 bg-zinc-950/60">
+        <div className="max-w-4xl mx-auto relative container">
           {/* Glow effect */}
           <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500 rounded-3xl blur-3xl opacity-20"></div>
           
-          <div className="relative rounded-3xl border border-white/10 bg-black/40 backdrop-blur-xl p-12 sm:p-16">
-            <h2 className="text-4xl sm:text-5xl font-bold mb-6">
+          <div className="relative rounded-2xl border border-white/10 bg-black/40 backdrop-blur-xl p-10 sm:p-12">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
               Ready to start{" "}
               <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
                 sketching?
               </span>
             </h2>
-            <p className="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-400 mb-8 max-w-2xl mx-auto">
               Join a room to start collaborating with friends, colleagues, or teammates. 
               Get started in seconds.
             </p>
             <button 
               onClick={() => router.push('/canvas')}
-              className="group px-10 py-5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 rounded-full text-white text-xl font-bold transition-all duration-300 hover:scale-105 shadow-2xl shadow-blue-500/40 hover:shadow-blue-500/60 inline-flex items-center gap-3"
+              className="group px-8 py-3.5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 rounded-xl text-white text-lg font-semibold transition-all duration-300 hover:scale-105 shadow-2xl shadow-blue-500/40 hover:shadow-blue-500/60 inline-flex items-center gap-2"
             >
               Join a Room Now
-              <svg className="w-6 h-6 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </button>
@@ -205,7 +202,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/5 py-8 relative z-10">
+      <footer className="border-t border-white/5 py-6 relative z-10 bg-black">
         <div className="container mx-auto px-4">
           <div className="text-center text-gray-400 text-sm">
             © {new Date().getFullYear()} QuickSketch. All rights reserved.
