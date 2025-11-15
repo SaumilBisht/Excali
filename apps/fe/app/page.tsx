@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SparklesLogo } from "@/components/ui/sparkles-logo";
 import { WavyBackground } from "@/components/ui/wavy-background";
+import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 
 export default function Home() {
   const router = useRouter();
@@ -79,6 +80,31 @@ export default function Home() {
             )}
           </div>
         </WavyBackground>
+      </section>
+
+      {/* Scroll Animation Section */}
+      <section className="hidden md:block">
+        <ContainerScroll
+          titleComponent={
+            <>
+              <h1 className="text-4xl font-semibold text-white">
+                Experience the power of <br />
+                <span className="text-4xl md:text-[6rem] font-bold mt-1 leading-none bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                  Real-Time Canvas
+                </span>
+              </h1>
+            </>
+          }
+        >
+          <img
+            src="/BACKGROUND.png"
+            alt="QuickSketch Canvas Preview"
+            height={720}
+            width={1400}
+            className="mx-auto rounded-2xl object-cover h-full object-left-top"
+            draggable={false}
+          />
+        </ContainerScroll>
       </section>
 
       {/* Features Section */}
