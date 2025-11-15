@@ -6,6 +6,7 @@ import { BACKEND_URL } from "./config";
 import axios from "axios";
 import { headers } from "next/headers";
 import { EvervaultCard, Icon } from "@/components/ui/evervault-card";
+import { SparklesLogo } from "@/components/ui/sparkles-logo";
 
 export default function JoinRoom() {
   const router = useRouter();
@@ -121,10 +122,10 @@ export default function JoinRoom() {
 
       <header className="container mx-auto py-8 px-4 flex justify-between items-center relative z-10">
         <div 
-          className="text-3xl font-bold bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent cursor-pointer hover:scale-105 transition-transform duration-300"
+          className="cursor-pointer hover:scale-105 transition-transform duration-300"
           onClick={() => router.push('/')}
         >
-          QuickSketch
+          <SparklesLogo />
         </div>
         <div className="flex items-center gap-3">
           {!isLoggedIn && (
