@@ -1,10 +1,10 @@
 "use client"
 import { useCallback, useEffect, useRef, useState } from "react";
-import { IconButton } from "./IconButton";
-import { ArrowUpLeft, Circle, CircleEllipsis, Eraser, LucideEllipsis, Palette, Pencil, RectangleHorizontal, Slash, TextCursorInputIcon, Triangle ,Undo, Redo } from "lucide-react";
+import { ArrowUpLeft, Circle, CircleEllipsis, Eraser, Palette, Pencil, RectangleHorizontal, Slash, Triangle, Undo, Redo, LogOut } from "lucide-react";
 import { Game } from "../../draw/Game";
 import { HexColorPicker } from "react-colorful";
 import { useRouter } from "next/navigation";
+import { FloatingDock } from "@/components/ui/floating-dock";
 
 export type Tool="circle" | "rect" | "pencil" | "line"| "tri" | "oval" | "eraser" | "select" | "text";
 
@@ -75,106 +75,104 @@ function ToolBar({selectedTool,setSelectedTool,selectedColor,setSelectedColor,on
 }){
   const [showColorPicker, setShowColorPicker] = useState(false);
   const router=useRouter();
+  
+  const dockItems = [
+    {
+      title: "Pencil",
+      icon: <Pencil className={`h-full w-full ${selectedTool === "pencil" ? "text-blue-500" : "text-neutral-500 dark:text-neutral-300"}`} />,
+      href: "#",
+      onClick: () => setSelectedTool("pencil")
+    },
+    {
+      title: "Rectangle",
+      icon: <RectangleHorizontal className={`h-full w-full ${selectedTool === "rect" ? "text-blue-500" : "text-neutral-500 dark:text-neutral-300"}`} />,
+      href: "#",
+      onClick: () => setSelectedTool("rect")
+    },
+    {
+      title: "Circle",
+      icon: <Circle className={`h-full w-full ${selectedTool === "circle" ? "text-blue-500" : "text-neutral-500 dark:text-neutral-300"}`} />,
+      href: "#",
+      onClick: () => setSelectedTool("circle")
+    },
+    {
+      title: "Line",
+      icon: <Slash className={`h-full w-full ${selectedTool === "line" ? "text-blue-500" : "text-neutral-500 dark:text-neutral-300"}`} />,
+      href: "#",
+      onClick: () => setSelectedTool("line")
+    },
+    {
+      title: "Triangle",
+      icon: <Triangle className={`h-full w-full ${selectedTool === "tri" ? "text-blue-500" : "text-neutral-500 dark:text-neutral-300"}`} />,
+      href: "#",
+      onClick: () => setSelectedTool("tri")
+    },
+    {
+      title: "Oval",
+      icon: <CircleEllipsis className={`h-full w-full ${selectedTool === "oval" ? "text-blue-500" : "text-neutral-500 dark:text-neutral-300"}`} />,
+      href: "#",
+      onClick: () => setSelectedTool("oval")
+    },
+    {
+      title: "Eraser",
+      icon: <Eraser className={`h-full w-full ${selectedTool === "eraser" ? "text-blue-500" : "text-neutral-500 dark:text-neutral-300"}`} />,
+      href: "#",
+      onClick: () => setSelectedTool("eraser")
+    },
+    {
+      title: "Selection",
+      icon: <ArrowUpLeft className={`h-full w-full ${selectedTool === "select" ? "text-blue-500" : "text-neutral-500 dark:text-neutral-300"}`} />,
+      href: "#",
+      onClick: () => setSelectedTool("select")
+    },
+    {
+      title: "Text",
+      icon: <div className={`font-bold px-1 ${selectedTool === "text" ? "text-blue-500" : "text-neutral-500 dark:text-neutral-300"}`}>T</div>,
+      href: "#",
+      onClick: () => setSelectedTool("text")
+    },
+    {
+      title: "Color Picker",
+      icon: <Palette className={`h-full w-full ${showColorPicker ? "text-blue-500" : "text-neutral-500 dark:text-neutral-300"}`} />,
+      href: "#",
+      onClick: () => setShowColorPicker(!showColorPicker)
+    },
+    {
+      title: "Undo",
+      icon: <Undo className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+      href: "#",
+      onClick: onUndo
+    },
+    {
+      title: "Redo",
+      icon: <Redo className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+      href: "#",
+      onClick: onRedo
+    },
+    {
+      title: "Leave Room",
+      icon: <LogOut className="h-full w-full text-red-500" />,
+      href: "#",
+      onClick: () => {
+        socket.send(JSON.stringify({
+          type:"leave_room",
+          roomId:roomId
+        }))
+        router.push("/canvas")
+      }
+    }
+  ];
+
   return(
-    <div className="fixed top-4 left-4 right-4 z-50">
-      <div className="flex flex-wrap gap-2 bg-white/10 p-2 rounded-lg backdrop-blur-sm">
-
-        <IconButton icon={<Pencil/>} 
-          onClick={()=>{
-            setSelectedTool("pencil")
-          }} activated={selectedTool==="pencil"}
-          text={"Pencil"}/>
-        <IconButton icon={<RectangleHorizontal/>} 
-          onClick={()=>{
-            setSelectedTool("rect")
-          }} activated={selectedTool==="rect"}
-          text={"Rectangle"}/>
-        <IconButton icon={<Circle/>} 
-          onClick={()=>{
-            setSelectedTool("circle")
-          }} activated={selectedTool==="circle"}
-          text={"Circle"}/>
-        <IconButton icon={<Slash/>}
-          onClick={()=>{
-            setSelectedTool("line")
-          }}
-          activated={selectedTool==="line"}
-          text={"Line"}/>
-        <IconButton icon={<Triangle/>}
-          onClick={()=>{
-            setSelectedTool("tri")
-          }}
-          activated={selectedTool==="tri"}
-          text={"Triangle"}/>
-        <IconButton icon={<CircleEllipsis/>}
-          onClick={()=>{
-            setSelectedTool("oval")
-          }}
-          activated={selectedTool==="oval"}
-          text={"Oval"}/>
-        <IconButton icon={<Eraser/>}
-          onClick={()=>{
-            setSelectedTool("eraser")
-          }}
-          activated={selectedTool==="eraser"}
-          text={"Eraser"}/>
-        <IconButton icon={<ArrowUpLeft/>}
-          onClick={()=>{
-            setSelectedTool("select")
-          }}
-          activated={selectedTool==="select"}
-          text={"Selection"}/>
-        <IconButton icon={<Text/>}
-          onClick={()=>{
-            setSelectedTool("text")
-          }}
-          activated={selectedTool==="text"}
-          text={"Text"}/>
-        <div className="relative">
-          <IconButton
-            icon={<Palette />}
-            onClick={() => setShowColorPicker(!showColorPicker)}
-            activated={showColorPicker}
-            text="Color Picker"
-          />
-
-          {showColorPicker && (
-            <div className="absolute top-14 left-1/2 -translate-x-1/2 z-50 bg-white p-2 rounded-md shadow-lg">
-              <HexColorPicker color={selectedColor} onChange={setSelectedColor} />
-            </div>
-          )}
+    <div className="fixed top-2 md:top-4 right-4 md:left-1/2 md:-translate-x-1/2 z-50 md:w-auto">
+      <FloatingDock items={dockItems} />
+      
+      {showColorPicker && (
+        <div className="absolute top-16 md:top-20 right-0 md:left-1/2 md:-translate-x-1/2 z-50 bg-black/90 backdrop-blur-sm border border-white/20 p-3 rounded-lg shadow-lg">
+          <HexColorPicker color={selectedColor} onChange={setSelectedColor} />
         </div>
-        <IconButton 
-          icon={<Undo />} 
-          onClick={onUndo} 
-          activated={false} 
-          text="Undo"
-        />
-        <IconButton 
-          icon={<Redo />} 
-          onClick={onRedo} 
-          activated={false} 
-          text="Redo"
-        />
-        <div className="ml-auto mt-2">
-          <button
-            className="text-white bg-red-600 py-2 px-4 rounded-full shadow-md hover:bg-red-400 transition-all"
-            onClick={() => {
-              socket.send(JSON.stringify({
-                type:"leave_room",
-                roomId:roomId
-              }))
-              router.push("/canvas")
-            }}
-          >
-            Leave Room
-          </button>
-        </div>
-      </div>
+      )}
     </div>
   )
   
-}
-function Text(){
-  return <div className="font-bold px-1">T</div>
 }
