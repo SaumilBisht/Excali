@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { SparklesLogo } from "@/components/ui/sparkles-logo";
 import { WavyBackground } from "@/components/ui/wavy-background";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
+import { AuroraBackground } from "@/components/ui/aurora-background";
+import { motion } from "motion/react";
 
 export default function Home() {
   const router = useRouter();
@@ -171,32 +173,38 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-12 px-4 text-center relative z-10 bg-zinc-950/60">
-        <div className="max-w-4xl mx-auto relative container">
-          {/* Glow effect */}
-          <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500 rounded-3xl blur-3xl opacity-20"></div>
-          
-          <div className="relative rounded-2xl border border-white/10 bg-black/40 backdrop-blur-xl p-10 sm:p-12">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Ready to start{" "}
-              <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
-                sketching?
-              </span>
-            </h2>
-            <p className="text-lg text-gray-400 mb-8 max-w-2xl mx-auto">
-              Join a room to start collaborating with friends, colleagues, or teammates. 
-              Get started in seconds.
-            </p>
-            <button 
-              onClick={() => router.push('/canvas')}
-              className="group px-8 py-3.5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 rounded-xl text-white text-lg font-semibold transition-all duration-300 hover:scale-105 shadow-2xl shadow-blue-500/40 hover:shadow-blue-500/60 inline-flex items-center gap-2"
-            >
-              Join a Room Now
-              <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
-            </button>
+      {/* CTA Section with Aurora Card */}
+      <section className="py-12 px-4 bg-black">
+        <div className="container mx-auto max-w-5xl">
+          <div className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+            <AuroraBackground>
+              <motion.div
+                initial={{ opacity: 0.0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{
+                  delay: 0.3,
+                  duration: 0.8,
+                  ease: "easeInOut",
+                }}
+                className="relative flex flex-col gap-4 items-center justify-center px-4"
+              >
+                <div className="text-3xl md:text-5xl font-bold text-white text-center">
+                  Ready to start{" "}
+                  <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                    sketching?
+                  </span>
+                </div>
+                <div className="font-light text-base md:text-xl text-neutral-200 py-2 text-center max-w-2xl">
+                  Join a room and start collaborating with your team in real-time. Get started in seconds.
+                </div>
+                <button 
+                  onClick={() => router.push('/canvas')}
+                  className="bg-white rounded-xl w-fit text-black px-6 py-3 font-semibold hover:bg-gray-100 transition-all duration-200 hover:scale-105"
+                >
+                  Join a Room Now
+                </button>
+              </motion.div>
+            </AuroraBackground>
           </div>
         </div>
       </section>

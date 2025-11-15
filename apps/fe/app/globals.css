@@ -20,6 +20,10 @@
   html {
     @apply scroll-smooth;
   }
+
+  .dark {
+    color-scheme: dark;
+  }
 }
 
 @layer utilities {

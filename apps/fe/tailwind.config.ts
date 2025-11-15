@@ -87,6 +87,14 @@ export default {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-10px)" },
         },
+        "aurora": {
+          from: {
+            backgroundPosition: "50% 50%, 50% 50%",
+          },
+          to: {
+            backgroundPosition: "350% 50%, 350% 50%",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -94,6 +102,7 @@ export default {
         "fade-in": "fade-in 0.5s ease-out forwards",
         "pulse-subtle": "pulse-subtle 3s infinite",
         "float": "float 6s ease-in-out infinite",
+        "aurora": "aurora 60s linear infinite",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
